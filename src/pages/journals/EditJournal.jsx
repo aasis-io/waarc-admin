@@ -1,0 +1,194 @@
+import {
+    Calendar,
+    FileText,
+    Image as ImageIcon,
+    Save,
+    Tag,
+    Upload,
+    User,
+} from "lucide-react";
+import React, { useState } from "react";
+
+const EditJournal = () => {
+  const [formData, setFormData] = useState({
+    title: "",
+    authors: "",
+    category: "Journals",
+    publishedDate: "",
+    image: null,
+    pdf: null,
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.files[0] });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Journal Data:", formData);
+  };
+
+  return (
+    <div className="bg-[#e8e9ed] p-6">
+      <h2 className="mb-6 text-2xl font-bold text-[#172542]">Edit Journal</h2>
+
+      <div className="max-w-6xl rounded-3xl bg-white p-8 shadow-xl">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Title */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              Journal Title
+            </label>
+            <div className="relative">
+              <FileText
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              />
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                placeholder="Journal title"
+                className="w-full rounded-xl border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:border-[#17254e] focus:outline-none"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Authors */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              Authors
+            </label>
+            <div className="relative">
+              <User
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              />
+              <input
+                type="text"
+                name="authors"
+                value={formData.authors}
+                onChange={handleChange}
+                placeholder="Author One, Author Two, Author Three"
+                className="w-full rounded-xl border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:border-[#17254e] focus:outline-none"
+                required
+              />
+            </div>
+            <span className="mt-1 block text-xs text-gray-500">
+              Separate authors with commas
+            </span>
+          </div>
+
+          {/* Category */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              Category
+            </label>
+            <div className="relative">
+              <Tag
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              />
+              <select
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                className="w-full appearance-none rounded-xl border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:border-[#17254e] focus:outline-none"
+              >
+                <option value="Journals">Journals</option>
+                <option value="Our Publications">Our Publications</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Published Date */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              Date Published
+            </label>
+            <div className="relative">
+              <Calendar
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              />
+              <input
+                type="date"
+                name="publishedDate"
+                value={formData.publishedDate}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:border-[#17254e] focus:outline-none"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Cover Image */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              Cover Image
+            </label>
+            <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-gray-300 px-4 py-3 text-sm text-gray-600 hover:border-[#17254e]">
+              <ImageIcon size={16} />
+              Upload Image
+              <input
+                type="file"
+                accept="image/*"
+                name="image"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </label>
+            {formData.image && (
+              <span className="ml-2 text-sm text-gray-500">
+                {formData.image.name}
+              </span>
+            )}
+          </div>
+
+          {/* PDF Upload */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              Journal PDF
+            </label>
+            <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-gray-300 px-4 py-3 text-sm text-gray-600 hover:border-[#17254e]">
+              <Upload size={16} />
+              Upload PDF
+              <input
+                type="file"
+                accept="application/pdf"
+                name="pdf"
+                onChange={handleFileChange}
+                className="hidden"
+                required
+              />
+            </label>
+            {formData.pdf && (
+              <span className="ml-2 text-sm text-gray-500">
+                {formData.pdf.name}
+              </span>
+            )}
+          </div>
+
+          {/* Submit */}
+          <div className="flex justify-end pt-4">
+            <button
+              type="submit"
+              className="flex items-center gap-2 rounded-xl bg-[#17254e] px-6 py-2.5 text-sm font-medium text-white shadow-lg hover:opacity-95"
+            >
+              <Save size={16} />
+              Update Journal
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default EditJournal;
