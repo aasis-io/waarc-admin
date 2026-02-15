@@ -2,6 +2,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import AdminLayout from "../layouts/AdminLayout";
+import AboutUs from "../pages/about/AboutUs";
 import Login from "../pages/auth/Login";
 import Dashboard from "../pages/dashboard/Dashboard";
 import HomePageDetails from "../pages/dashboard/HomePageDetails";
@@ -61,6 +62,9 @@ const AppRoutes = () => {
         <Route path="videos/add" element={<AddVideo />} />
         <Route path="videos" element={<ManageVideos />} />
         {/* <Route path="videos/edit" element={<EditVideo />} /> */}
+
+        {/* About Us */}
+        <Route path="about" element={<AboutUs />} />
       </Route>
 
       {/* Fallback */}

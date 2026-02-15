@@ -1,6 +1,7 @@
 import {
   ChevronDown,
   Clapperboard,
+  FilePenLine,
   House,
   LayoutDashboard,
   NotebookText,
@@ -24,6 +25,11 @@ const categories = [
         name: "Home",
         path: "/home/details",
         icon: <House size={16} />,
+      },
+      {
+        name: "About Us",
+        path: "/about",
+        icon: <FilePenLine size={16} />,
       },
       {
         name: "Team",
