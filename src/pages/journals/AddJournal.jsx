@@ -1,13 +1,14 @@
 import {
-    Calendar,
-    FileText,
-    Image as ImageIcon,
-    Save,
-    Tag,
-    Upload,
-    User,
+  Calendar,
+  FileText,
+  Image as ImageIcon,
+  Save,
+  Tag,
+  Upload,
+  User,
 } from "lucide-react";
 import React, { useState } from "react";
+// import { addJournal } from "../../services/api"; // Uncomment when backend is ready
 
 const AddJournal = () => {
   const [formData, setFormData] = useState({
@@ -19,17 +20,47 @@ const AddJournal = () => {
     pdf: null,
   });
 
+  const [imagePreview, setImagePreview] = useState(null);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleFileChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.files[0] });
+    const file = e.target.files[0];
+    setFormData({ ...formData, [e.target.name]: file });
+
+    // Show image preview for cover image only
+    if (e.target.name === "image" && file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreview(reader.result);
+      reader.readAsDataURL(file);
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Journal Data:", formData);
+
+    const data = new FormData();
+    data.append("title", formData.title);
+    data.append("authors", formData.authors);
+    data.append("category", formData.category);
+    data.append("publishedDate", formData.publishedDate);
+    if (formData.image) data.append("image", formData.image);
+    if (formData.pdf) data.append("pdf", formData.pdf);
+
+    console.log("Journal Data (backend-ready):");
+    for (let pair of data.entries()) {
+      console.log(pair[0], ":", pair[1]);
+    }
+
+    // Uncomment when backend is ready
+    // try {
+    //   const response = await addJournal(data);
+    //   console.log("Journal saved:", response);
+    // } catch (error) {
+    //   console.error("Error saving journal:", error);
+    // }
   };
 
   return (
@@ -145,9 +176,16 @@ const AddJournal = () => {
               />
             </label>
             {formData.image && (
-              <span className="ml-2 text-sm text-gray-500">
-                {formData.image.name}
-              </span>
+              <div className="mt-2 flex items-center gap-4">
+                <img
+                  src={imagePreview}
+                  alt="Cover Preview"
+                  className="h-24 w-24 rounded-lg object-cover"
+                />
+                <span className="text-sm text-gray-500">
+                  {formData.image.name}
+                </span>
+              </div>
             )}
           </div>
 
@@ -179,7 +217,7 @@ const AddJournal = () => {
           <div className="flex justify-end pt-4">
             <button
               type="submit"
-              className="flex items-center gap-2 rounded-xl bg-[#17254e] px-6 py-2.5 text-sm font-medium text-white shadow-lg hover:opacity-95"
+              className="flex items-center gap-2 rounded-xl bg-[#17254e] cursor-pointer px-6 py-2.5 text-sm font-medium text-white shadow-lg hover:opacity-95"
             >
               <Save size={16} />
               Save Journal

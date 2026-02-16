@@ -47,11 +47,12 @@ const AppRoutes = () => {
         <Route path="settings" element={<Settings />} />
         <Route path="team/add" element={<AddTeam />} />
         <Route path="team" element={<ManageTeam />} />
-        <Route path="team/edit" element={<EditTeam />} />
+        <Route path="team/update/:id" element={<EditTeam />} />
         <Route path="home/details" element={<HomePageDetails />} />
+
         <Route path="journals/add" element={<AddJournal />} />
         <Route path="journals" element={<ManageJournals />} />
-        <Route path="journals/edit" element={<EditJournal />} />
+        <Route path="journals/update/:id" element={<EditJournal />} />
 
         {/* Images routes */}
         <Route path="images/add" element={<AddImage />} />

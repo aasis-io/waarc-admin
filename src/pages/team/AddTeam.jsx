@@ -1,6 +1,8 @@
 import { Briefcase, MapPin, Save, Upload, User } from "lucide-react";
 import React, { useState } from "react";
 
+// import { addTeamMember } from "../../services/api"; // 🔜 API call
+
 const AddTeam = () => {
   const [formData, setFormData] = useState({
     image: null,
@@ -12,14 +14,37 @@ const AddTeam = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+  const [preview, setPreview] = useState(null);
 
   const handleImageChange = (e) => {
     setFormData({ ...formData, image: e.target.files[0] });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // ✅ For now: log form data
     console.log("Submitted Team Member:", formData);
+
+    /*
+    🔜 BACKEND INTEGRATION
+
+    try {
+      const payload = new FormData();
+      if (formData.image) payload.append("image", formData.image);
+      payload.append("name", formData.name);
+      payload.append("position", formData.position);
+      payload.append("location", formData.location);
+
+      const response = await addTeamMember(payload);
+      console.log("API Response:", response.data);
+
+      // ✅ Optionally, reset form
+      setFormData({ image: null, name: "", position: "", location: "" });
+    } catch (error) {
+      console.error("Failed to add team member", error);
+    }
+    */
   };
 
   return (
@@ -42,7 +67,13 @@ const AddTeam = () => {
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={handleImageChange}
+                  onChange={(e) => {
+                    handleImageChange(e);
+                    // Update preview immediately
+                    if (e.target.files[0]) {
+                      setPreview(URL.createObjectURL(e.target.files[0]));
+                    }
+                  }}
                   className="hidden"
                 />
               </label>
@@ -55,6 +86,17 @@ const AddTeam = () => {
             <span className="block mt-2 text-sm text-gray-500">
               400 x 400 px
             </span>
+
+            {/* Image Preview */}
+            {preview && (
+              <div className="mt-4">
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="h-32 w-32 rounded-xl object-cover border border-gray-300"
+                />
+              </div>
+            )}
           </div>
 
           {/* Name */}
@@ -126,7 +168,7 @@ const AddTeam = () => {
           <div className="flex justify-end pt-4">
             <button
               type="submit"
-              className="flex items-center gap-2 rounded-xl bg-[#17254e] px-6 py-2.5 text-sm font-medium text-white shadow-lg hover:opacity-95"
+              className="flex items-center gap-2 rounded-xl bg-[#17254e] px-6 py-2.5 text-sm font-medium cursor-pointer text-white shadow-lg hover:opacity-95"
             >
               <Save size={16} />
               Save Member

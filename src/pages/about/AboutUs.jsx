@@ -8,6 +8,8 @@ import {
 import React, { useState } from "react";
 import RichTextEditor from "../../components/RichTextEditor";
 
+// import { getAboutUsDetails, updateAboutUsDetails } from "../../services/api";
+
 const AboutUs = () => {
   const [formData, setFormData] = useState({
     title: "",
@@ -28,16 +30,21 @@ const AboutUs = () => {
     ],
   });
 
+  const [imagePreview, setImagePreview] = useState(null); // ✅ image preview
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleImageChange = (e) => {
-    setFormData({ ...formData, image: e.target.files[0] });
-  };
+    const file = e.target.files[0];
+    setFormData({ ...formData, image: file });
 
-  const toggleStatus = (key) => {
-    setFormData({ ...formData, [key]: !formData[key] });
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreview(reader.result);
+      reader.readAsDataURL(file);
+    }
   };
 
   const updateWhyUs = (index, key, value) => {
@@ -46,12 +53,68 @@ const AboutUs = () => {
     setFormData({ ...formData, whyUs: updated });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // TODO: API integration (Create or Update singleton About Us)
+    // ✅ FOR NOW: just log form data
     console.log("About Us Data:", formData);
+
+    /*
+    🔜 BACKEND INTEGRATION
+
+    try {
+      const payload = new FormData();
+      if (formData.image) payload.append("image", formData.image);
+      payload.append("title", formData.title);
+      payload.append("description", formData.description);
+      payload.append("metaTitle", formData.metaTitle);
+      payload.append("metaKeywords", formData.metaKeywords);
+      payload.append("metaDescription", formData.metaDescription);
+      payload.append("whyUs", JSON.stringify(formData.whyUs)); // array as string
+
+      const response = await updateAboutUsDetails(payload);
+      console.log("API Response:", response.data);
+    } catch (error) {
+      console.error("Failed to update About Us", error);
+    }
+    */
   };
+
+  /* ------------------------------------------------------------------
+     Fetch default About Us details on mount
+  ------------------------------------------------------------------- */
+  /*
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+        const response = await getAboutUsDetails();
+        const data = response.data;
+
+        setFormData({
+          title: data.title || "",
+          description: data.description || "",
+          image: null, // new image upload
+          metaTitle: data.metaTitle || "",
+          metaKeywords: data.metaKeywords || "",
+          metaDescription: data.metaDescription || "",
+          whyUs: data.whyUs || [
+            { title: "", description: "" },
+            { title: "", description: "" },
+            { title: "", description: "" },
+            { title: "", description: "" },
+          ],
+        });
+
+        // ✅ Show existing image
+        if (data.imageUrl) setImagePreview(data.imageUrl);
+      } catch (error) {
+        console.error("Failed to fetch About Us details", error);
+      }
+    };
+
+    fetchDetails();
+  }, []);
+  */
 
   return (
     <div className="bg-[#e8e9ed] p-6">
@@ -96,10 +159,16 @@ const AboutUs = () => {
                   className="hidden"
                 />
               </label>
-              {formData.image && (
-                <span className="ml-3 text-sm text-gray-500">
-                  {formData.image.name}
-                </span>
+
+              {/* ✅ Image Preview */}
+              {imagePreview && (
+                <div className="mt-3">
+                  <img
+                    src={imagePreview}
+                    alt="About Us Banner"
+                    className="h-40 w-full max-w-md object-cover rounded-xl border border-gray-200"
+                  />
+                </div>
               )}
             </div>
           </section>
@@ -132,25 +201,12 @@ const AboutUs = () => {
                     rows={3}
                     className="w-full rounded-xl border px-4 py-2 text-sm"
                   />
-
-                  {/* <button
-                    type="button"
-                    onClick={() => toggleWhyUsStatus(index)}
-                    className="flex items-center gap-2 text-sm text-[#17254e]"
-                  >
-                    {item.status ? (
-                      <ToggleRight size={22} />
-                    ) : (
-                      <ToggleLeft size={22} />
-                    )}
-                    {item.status ? "Visible" : "Hidden"}
-                  </button> */}
                 </div>
               ))}
             </div>
           </section>
 
-          {/* SEO Section */}
+          {/* ===== SEO Section ===== */}
           <div className="rounded-2xl border border-gray-200 bg-gray-50 p-6">
             <h3 className="mb-4 text-sm font-semibold text-gray-700">
               SEO Meta Information
@@ -224,7 +280,7 @@ const AboutUs = () => {
           <div className="flex justify-end pt-6">
             <button
               type="submit"
-              className="flex items-center gap-2 rounded-xl bg-[#17254e] px-6 py-2.5 text-sm font-medium text-white shadow-lg"
+              className="flex items-center gap-2 rounded-xl bg-[#17254e] px-6 py-2.5 text-sm font-medium cursor-pointer text-white shadow-lg hover:opacity-95"
             >
               <Save size={16} />
               Save About Us

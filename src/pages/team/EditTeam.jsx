@@ -1,25 +1,72 @@
 import { Briefcase, MapPin, Save, Upload, User } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+// import { getTeamMember, updateTeamMember } from "../../services/api"; // 🔜 backend API
 
 const EditTeam = () => {
+  const { id: memberId } = useParams(); // get member ID from URL
   const [formData, setFormData] = useState({
     image: null,
     name: "",
     position: "",
     location: "",
   });
+  const [preview, setPreview] = useState(null); // Image preview
+
+  // Fetch existing team member data
+  useEffect(() => {
+    // 🔜 Uncomment when API is ready
+    /*
+    const fetchMember = async () => {
+      try {
+        const response = await getTeamMember(memberId);
+        setFormData({
+          image: null, // image will be uploaded only if changed
+          name: response.data.name,
+          position: response.data.position,
+          location: response.data.location,
+        });
+        setPreview(response.data.imageUrl); // existing image URL
+      } catch (error) {
+        console.error("Failed to fetch team member", error);
+      }
+    };
+    fetchMember();
+    */
+  }, [memberId]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleImageChange = (e) => {
-    setFormData({ ...formData, image: e.target.files[0] });
+    if (e.target.files[0]) {
+      setFormData({ ...formData, image: e.target.files[0] });
+      setPreview(URL.createObjectURL(e.target.files[0]));
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submitted Team Member:", formData);
+
+    /*
+    🔜 Backend Integration
+    try {
+      const payload = new FormData();
+      if (formData.image) payload.append("image", formData.image);
+      payload.append("name", formData.name);
+      payload.append("position", formData.position);
+      payload.append("location", formData.location);
+
+      const response = await updateTeamMember(memberId, payload);
+      console.log("API Response:", response.data);
+
+      // Optionally show a success message or navigate back
+    } catch (error) {
+      console.error("Failed to update team member", error);
+    }
+    */
   };
 
   return (
@@ -55,6 +102,17 @@ const EditTeam = () => {
             <span className="block mt-2 text-sm text-gray-500">
               400 x 400 px
             </span>
+
+            {/* Preview */}
+            {preview && (
+              <div className="mt-4">
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="h-32 w-32 rounded-xl object-cover border border-gray-300"
+                />
+              </div>
+            )}
           </div>
 
           {/* Name */}
@@ -126,7 +184,7 @@ const EditTeam = () => {
           <div className="flex justify-end pt-4">
             <button
               type="submit"
-              className="flex items-center gap-2 rounded-xl bg-[#17254e] px-6 py-2.5 text-sm font-medium text-white shadow-lg hover:opacity-95"
+              className="flex items-center gap-2 rounded-xl bg-[#17254e] px-6 py-2.5 text-sm font-medium cursor-pointer text-white shadow-lg hover:opacity-95"
             >
               <Save size={16} />
               Update Details

@@ -1,42 +1,72 @@
 import { FileText, Trash2, UserPen } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
-// Dummy journal data
-const journalData = [
-  {
-    id: 1,
-    title: "Climate Change Impact on Himalayas",
-    authors: "Ashish Thapa, Sita Sharma",
-    category: "Journals",
-    publishedDate: "2024-01-15",
-  },
-  {
-    id: 2,
-    title: "Sustainable Trekking Practices",
-    authors: "Ramesh Koirala",
-    category: "Our Publications",
-    publishedDate: "2023-11-02",
-  },
-  {
-    id: 3,
-    title: "Biodiversity of Nepal",
-    authors: "Sita Sharma, Ramesh Koirala",
-    category: "Journals",
-    publishedDate: "2023-08-21",
-  },
-];
+import swal from "sweetalert2";
+// import { getTeamJournals, deleteJournal } from "../../services/api"; // Uncomment for backend
 
 const ManageJournals = () => {
-  const handleEdit = (id) => {
-    // TODO: Replace with backend API call
-    console.log("Edit journal:", id);
+  const [journals, setJournals] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchJournals = async () => {
+      setLoading(true);
+      try {
+        // const data = await getTeamJournals();
+        // setJournals(data);
+
+        // Temporary mock
+        setJournals([
+          {
+            id: 1,
+            title: "Climate Change Impact on Himalayas",
+            authors: "Ashish Thapa, Sita Sharma",
+            category: "Journals",
+            publishedDate: "2024-01-15",
+          },
+          {
+            id: 2,
+            title: "Sustainable Trekking Practices",
+            authors: "Ramesh Koirala",
+            category: "Our Publications",
+            publishedDate: "2023-11-02",
+          },
+        ]);
+      } catch (error) {
+        console.error("Error fetching journals:", error);
+        swal("Error", "Failed to fetch journals", "error");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchJournals();
+  }, []);
+
+  const handleDelete = async (id) => {
+    const result = await swal.fire({
+      title: "Are you sure?",
+      text: "Once deleted, you will not be able to recover this journal!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      // await deleteJournal(id); // Backend call
+      setJournals(journals.filter((j) => j.id !== id)); // Temporary frontend delete
+      swal.fire("Deleted!", "Journal has been deleted.", "success");
+    } catch (error) {
+      console.error("Error deleting journal:", error);
+      swal.fire("Error", "Failed to delete journal", "error");
+    }
   };
 
-  const handleDelete = (id) => {
-    // TODO: Replace with backend API call
-    console.log("Delete journal:", id);
-  };
+  if (loading)
+    return <div className="p-6 text-gray-600">Loading journals...</div>;
 
   return (
     <div className="bg-[#e8e9ed] p-6">
@@ -70,20 +100,18 @@ const ManageJournals = () => {
           </thead>
 
           <tbody className="divide-y divide-gray-200">
-            {journalData.map((journal, index) => (
+            {journals.map((journal, index) => (
               <tr
                 key={journal.id}
                 className="transition-colors hover:bg-gray-50"
               >
                 <td className="whitespace-nowrap px-6 py-4">{index + 1}</td>
 
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <FileText size={18} className="text-gray-400" />
-                    <span className="font-medium text-gray-800">
-                      {journal.title}
-                    </span>
-                  </div>
+                <td className="px-6 py-4 flex items-center gap-3">
+                  <FileText size={18} className="text-gray-400" />
+                  <span className="font-medium text-gray-800">
+                    {journal.title}
+                  </span>
                 </td>
 
                 <td className="px-6 py-4 text-gray-600">{journal.authors}</td>
@@ -100,9 +128,8 @@ const ManageJournals = () => {
 
                 <td className="flex justify-center gap-3 px-6 py-4 text-center">
                   <Link
-                    to={"/journals/edit"}
-                    onClick={() => handleEdit(journal.id)}
-                    className="flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-100 hover:text-blue-800"
+                    to={`/journals/update/${journal.id}`}
+                    className="flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-600 cursor-pointer transition-colors hover:bg-blue-100 hover:text-blue-800"
                   >
                     <UserPen size={16} />
                     <span>Edit</span>
@@ -110,7 +137,7 @@ const ManageJournals = () => {
 
                   <button
                     onClick={() => handleDelete(journal.id)}
-                    className="flex items-center gap-1 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-100 hover:text-red-800"
+                    className="flex items-center gap-1 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600 cursor-pointer transition-colors hover:bg-red-100 hover:text-red-800"
                   >
                     <Trash2 size={16} />
                     <span>Delete</span>

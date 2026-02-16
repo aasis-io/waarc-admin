@@ -1,39 +1,92 @@
 import { Trash2, UserPen } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
-// Dummy team data
-const teamData = [
-  {
-    id: 1,
-    name: "Ashish Thapa",
-    position: "CEO",
-    avatar: "https://i.pravatar.cc/150?img=1",
-  },
-  {
-    id: 2,
-    name: "Sita Sharma",
-    position: "CTO",
-    avatar: "https://i.pravatar.cc/150?img=2",
-  },
-  {
-    id: 3,
-    name: "Ramesh Koirala",
-    position: "Designer",
-    avatar: "https://i.pravatar.cc/150?img=3",
-  },
-];
+import Swal from "sweetalert2";
+// import { getTeamMembers, deleteTeamMember } from "../../services/api"; // 🔜 API integration
 
 const ManageTeam = () => {
+  const [teamData, setTeamData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTeam = async () => {
+      setLoading(true);
+      try {
+        // 🔜 Uncomment when API is ready
+        // const response = await getTeamMembers();
+        // setTeamData(response.data);
+
+        // Dummy data for now
+        setTeamData([
+          {
+            id: 1,
+            name: "Ashish Thapa",
+            position: "CEO",
+            avatar: "https://i.pravatar.cc/150?img=1",
+          },
+          {
+            id: 2,
+            name: "Sita Sharma",
+            position: "CTO",
+            avatar: "https://i.pravatar.cc/150?img=2",
+          },
+          {
+            id: 3,
+            name: "Ramesh Koirala",
+            position: "Designer",
+            avatar: "https://i.pravatar.cc/150?img=3",
+          },
+        ]);
+      } catch (error) {
+        console.error("Failed to fetch team members", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeam();
+  }, []);
+
   const handleEdit = (id) => {
-    // TODO: Replace with backend API call to edit member
     console.log("Edit team member:", id);
   };
 
-  const handleDelete = (id) => {
-    // TODO: Replace with backend API call to delete member
-    console.log("Delete team member:", id);
+  const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        // 🔜 Uncomment when API is ready
+        // await deleteTeamMember(id);
+
+        // For now: remove locally
+        setTeamData((prev) => prev.filter((member) => member.id !== id));
+
+        Swal.fire("Deleted!", "Team member has been deleted.", "success");
+        console.log("Deleted team member:", id);
+      } catch (error) {
+        Swal.fire("Error!", "Failed to delete team member.", "error");
+        console.error("Failed to delete team member", error);
+      }
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="p-6 text-gray-700 font-medium">
+        Loading team members...
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#e8e9ed] p-6">
@@ -79,7 +132,7 @@ const ManageTeam = () => {
                 <td className="px-6 py-4 text-gray-600">{member.position}</td>
                 <td className="px-6 py-4 text-center flex justify-center gap-3">
                   <Link
-                    to={"/team/update"}
+                    to={`/team/update/${member.id}`}
                     onClick={() => handleEdit(member.id)}
                     className="flex items-center gap-1 px-3 py-2 cursor-pointer rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-800 transition-colors font-medium text-sm"
                   >
@@ -87,7 +140,6 @@ const ManageTeam = () => {
                     <span>Edit</span>
                   </Link>
                   <button
-                    to={"/"}
                     onClick={() => handleDelete(member.id)}
                     className="flex items-center gap-1 px-3 py-2 cursor-pointer rounded-lg bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-800 transition-colors font-medium text-sm"
                   >
@@ -97,6 +149,13 @@ const ManageTeam = () => {
                 </td>
               </tr>
             ))}
+            {teamData.length === 0 && (
+              <tr>
+                <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
+                  No team members found.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
