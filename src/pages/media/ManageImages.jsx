@@ -52,7 +52,7 @@ const ManageImages = () => {
                 </td>
                 <td className="flex justify-center gap-3 px-6 py-4 text-center">
                   <Link
-                    to={"/media/image/edit"}
+                    to={"/media/image/update"}
                     onClick={() => handleEdit(img.id)}
                     className="flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-600 hover:bg-blue-100 hover:text-blue-800"
                   >

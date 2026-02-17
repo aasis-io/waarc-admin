@@ -2,20 +2,31 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import AdminLayout from "../layouts/AdminLayout";
+
+// Pages
 import AboutUs from "../pages/about/AboutUs";
 import Login from "../pages/auth/Login";
 import Dashboard from "../pages/dashboard/Dashboard";
 import HomePageDetails from "../pages/dashboard/HomePageDetails";
+import ManageMails from "../pages/event/ManageMails";
+
 import AddJournal from "../pages/journals/AddJournal";
 import EditJournal from "../pages/journals/EditJournal";
 import ManageJournals from "../pages/journals/ManageJournals";
+
 import AddImage from "../pages/media/AddImage";
 import AddVideo from "../pages/media/AddVideo";
 import ManageImages from "../pages/media/ManageImages";
 import ManageVideos from "../pages/media/ManageVideos";
+
 import AddTeam from "../pages/team/AddTeam";
 import EditTeam from "../pages/team/EditTeam";
 import ManageTeam from "../pages/team/ManageTeam";
+
+import AddUsefulLink from "../pages/links/AddUsefulLink";
+import EditUsefulLink from "../pages/links/EditUsefulLink";
+import ManageUsefulLinks from "../pages/links/ManageUsefulLinks";
+
 import Users from "../pages/users/Users";
 import Settings from "../settings/Settings";
 
@@ -45,27 +56,39 @@ const AppRoutes = () => {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="users" element={<Users />} />
         <Route path="settings" element={<Settings />} />
+
+        {/* Team routes */}
         <Route path="team/add" element={<AddTeam />} />
         <Route path="team" element={<ManageTeam />} />
         <Route path="team/update/:id" element={<EditTeam />} />
+
+        {/* Home Page */}
         <Route path="home/details" element={<HomePageDetails />} />
 
+        {/* Journals routes */}
         <Route path="journals/add" element={<AddJournal />} />
         <Route path="journals" element={<ManageJournals />} />
         <Route path="journals/update/:id" element={<EditJournal />} />
 
-        {/* Images routes */}
+        {/* Media routes */}
         <Route path="images/add" element={<AddImage />} />
         <Route path="images" element={<ManageImages />} />
         {/* <Route path="images/edit" element={<EditImage />} /> */}
 
-        {/* Videos routes */}
         <Route path="videos/add" element={<AddVideo />} />
         <Route path="videos" element={<ManageVideos />} />
         {/* <Route path="videos/edit" element={<EditVideo />} /> */}
 
         {/* About Us */}
         <Route path="about" element={<AboutUs />} />
+
+        {/* Event Mails */}
+        <Route path="manage-mails" element={<ManageMails />} />
+
+        {/* Useful Links */}
+        <Route path="useful-links/add" element={<AddUsefulLink />} />
+        <Route path="useful-links" element={<ManageUsefulLinks />} />
+        <Route path="useful-links/update/:id" element={<EditUsefulLink />} />
       </Route>
 
       {/* Fallback */}

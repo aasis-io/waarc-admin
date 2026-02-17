@@ -49,15 +49,6 @@ const Dashboard = () => {
           );
         })}
       </div>
-
-      {/* Placeholder Section */}
-      <div className="mt-8 bg-white rounded-2xl shadow-md p-6">
-        <h3 className="text-lg font-semibold text-[#172542] mb-2">Overview</h3>
-        <p className="text-gray-600 text-sm">
-          This section can be used for charts, recent activity, bookings table,
-          or analytics once the backend is connected.
-        </p>
-      </div>
     </div>
   );
 };

@@ -4,6 +4,8 @@ import {
   FilePenLine,
   House,
   LayoutDashboard,
+  Link2,
+  Mails,
   NotebookText,
   Settings,
   UserRoundCog,
@@ -32,6 +34,11 @@ const categories = [
         icon: <FilePenLine size={16} />,
       },
       {
+        name: "Manage Mails",
+        path: "/manage-mails",
+        icon: <Mails size={16} />,
+      },
+      {
         name: "Team",
         icon: <UserRoundCog size={16} />,
         children: [
@@ -39,6 +46,15 @@ const categories = [
           { name: "Manage Team", path: "/team" },
         ],
       },
+      {
+        name: "Useful Links",
+        icon: <Link2 size={16} />,
+        children: [
+          { name: "Add Useful Link", path: "/useful-links/add" },
+          { name: "Manage Useful Links", path: "/useful-links" },
+        ],
+      },
+
       {
         name: "Journals",
         icon: <NotebookText size={16} />,

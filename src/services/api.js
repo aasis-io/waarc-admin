@@ -190,4 +190,75 @@ export const updateSettings = async (data) => {
 /* ------------------------------------------------------------------
    EXPORT AXIOS INSTANCE (optional)
 ------------------------------------------------------------------- */
+
+// Delete registered mail by ID
+export const deleteRegisteredMail = async (id) => {
+  try {
+    const response = await api.delete(`/registered-mails/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting registered mail:", error);
+    throw error;
+  }
+};
+
+// Optional: fetch all registered mails
+export const getRegisteredMails = async () => {
+  try {
+    const response = await api.get("/registered-mails");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching registered mails:", error);
+    throw error;
+  }
+};
+
+/* ------------------------------------------------------------------
+   USEFUL LINKS APIs
+------------------------------------------------------------------- */
+
+/**
+ * Add a new Useful Link
+ * @param {object} data - { title, link }
+ */
+export const addUsefulLink = async (data) => {
+  const response = await api.post("/useful-links", data);
+  return response;
+};
+
+/**
+ * Get all Useful Links
+ */
+export const getUsefulLinks = async () => {
+  const response = await api.get("/useful-links");
+  return response.data;
+};
+
+/**
+ * Get single Useful Link by ID
+ */
+export const getUsefulLinkById = async (id) => {
+  const response = await api.get(`/useful-links/${id}`);
+  return response.data;
+};
+
+/**
+ * Update Useful Link by ID
+ * @param {string} id
+ * @param {object} data
+ */
+export const updateUsefulLink = async (id, data) => {
+  const response = await api.put(`/useful-links/${id}`, data);
+  return response;
+};
+
+/**
+ * Delete Useful Link by ID
+ * @param {string} id
+ */
+export const deleteUsefulLink = async (id) => {
+  const response = await api.delete(`/useful-links/${id}`);
+  return response;
+};
+
 export default api;
