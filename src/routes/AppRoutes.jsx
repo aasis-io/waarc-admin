@@ -27,6 +27,7 @@ import AddUsefulLink from "../pages/links/AddUsefulLink";
 import EditUsefulLink from "../pages/links/EditUsefulLink";
 import ManageUsefulLinks from "../pages/links/ManageUsefulLinks";
 
+import EventPage from "../pages/event/EventPage";
 import Users from "../pages/users/Users";
 import Settings from "../settings/Settings";
 
@@ -84,6 +85,7 @@ const AppRoutes = () => {
 
         {/* Event Mails */}
         <Route path="manage-mails" element={<ManageMails />} />
+        <Route path="event" element={<EventPage />} />
 
         {/* Useful Links */}
         <Route path="useful-links/add" element={<AddUsefulLink />} />

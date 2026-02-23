@@ -162,8 +162,8 @@ const EditJournal = ({ journalId }) => {
                 onChange={handleChange}
                 className="w-full appearance-none rounded-xl border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:border-[#17254e] focus:outline-none"
               >
-                <option value="Journals">Journals</option>
-                <option value="Our Publications">Our Publications</option>
+                <option value="journals">Journals</option>
+                <option value="publications">Our Publications</option>
               </select>
             </div>
           </div>

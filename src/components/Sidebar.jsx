@@ -1,14 +1,14 @@
 import {
+  CalendarClock,
   ChevronDown,
   Clapperboard,
   FilePenLine,
   House,
   LayoutDashboard,
   Link2,
-  Mails,
   NotebookText,
   Settings,
-  UserRoundCog,
+  UserRoundCog
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
@@ -34,9 +34,12 @@ const categories = [
         icon: <FilePenLine size={16} />,
       },
       {
-        name: "Manage Mails",
-        path: "/manage-mails",
-        icon: <Mails size={16} />,
+        name: "Manage Event",
+        icon: <CalendarClock size={16} />,
+        children: [
+          { name: "Event", path: "/event" },
+          { name: "Manage Mails", path: "/manage-mails" },
+        ],
       },
       {
         name: "Team",
