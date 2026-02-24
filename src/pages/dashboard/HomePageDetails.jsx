@@ -4,10 +4,10 @@ import {
   Image as ImageIcon,
   Save,
   Tag,
+  TextInitial,
   Type,
 } from "lucide-react";
 import React, { useState } from "react";
-import RichTextEditor from "../../components/RichTextEditor";
 
 // import { getHomePageDetails, updateHomePageDetails } from "../../services/api";
 
@@ -156,14 +156,24 @@ const HomePageDetails = () => {
           {/* Description */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
-              Page Description
+              Page Subtitle
             </label>
-            <RichTextEditor
-              value={formData.description}
-              onChange={(html) =>
-                setFormData({ ...formData, description: html })
-              }
-            />
+            <div className="relative">
+              <TextInitial
+                size={16}
+                className="absolute left-3 top-3 text-gray-400"
+              />
+              <textarea
+                className="w-full pl-10 rounded-md border border-gray-300 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+                placeholder="Enter page subtitle here..." // added placeholder
+                rows={6} // adjust height as needed
+                required
+              />
+            </div>
           </div>
 
           {/* SEO Section */}

@@ -151,7 +151,7 @@ const AboutUs = () => {
             <div className="mt-4">
               <label className="inline-flex items-center gap-2 cursor-pointer rounded-xl border border-dashed px-4 py-3 text-sm text-gray-600">
                 <ImageIcon size={16} />
-                Upload Banner Image
+                Upload Image
                 <input
                   type="file"
                   accept="image/*"
