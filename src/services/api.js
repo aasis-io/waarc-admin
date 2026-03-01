@@ -28,7 +28,7 @@ api.interceptors.response.use(
  * Get Home Page Details (single default record)
  */
 export const getHomePageDetails = async () => {
-  const response = await api.get("/homepage/default");
+  const response = await api.get("/getHome");
   return response;
 };
 
@@ -38,7 +38,7 @@ export const getHomePageDetails = async () => {
  * @param {FormData} data
  */
 export const updateHomePageDetails = async (data) => {
-  const response = await api.put("/homepage/default", data, {
+  const response = await api.put("/home", data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

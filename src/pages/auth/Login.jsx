@@ -61,7 +61,7 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full pl-10 pr-10 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#17254e] focus:border-transparent"
-              required
+              required autoComplete="true"
             />
             <button
               type="button"
