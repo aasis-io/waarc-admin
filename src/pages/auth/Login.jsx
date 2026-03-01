@@ -1,35 +1,34 @@
 import { Eye, EyeOff, Lock, User } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ import
 import Logo from "../../assets/logo.svg";
 import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
+  const navigate = useNavigate(); // ✅ hook
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  useEffect(() => {
+    if (isAuthenticated) navigate("/dashboard", { replace: true }); // ✅ redirect without refresh
+  }, [isAuthenticated]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await login(email, password);
-    if (!result.success) {
-      // setError(result.message || "Login failed");
-    } else {
-      // redirect to dashboard or homepage
-      window.location.href = "/dashboard";
-    }
+    await login(email, password);
+    // no need for window.location.href
   };
-  
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#e8e9ed]">
+    <div className="flex items-center justify-center min-h-screen bg-[#e8e9ed] p-4">
       <div className="bg-white p-10 rounded-2xl shadow-lg w-full max-w-md">
-        {/* Logo */}
         <div className="flex justify-center mb-6">
           <img src={Logo} alt="Wisdom Academy" className="h-16 w-auto" />
         </div>
 
-        <h2 className="text-2xl font-heading font-bold text-center text-gray-800 mb-8">
+        <h2 className="text-2xl font-heading font-bold text-center text-gray-800 mb-4">
           Admin Panel Login
         </h2>
 
@@ -73,7 +72,6 @@ const Login = () => {
             </button>
           </div>
 
-          {/* Submit */}
           <button
             type="submit"
             className="w-full py-3 bg-[#17254e] text-white font-semibold rounded-xl shadow-md hover:bg-[#0f1a3a] transition-colors cursor-pointer"
@@ -82,7 +80,6 @@ const Login = () => {
           </button>
         </form>
 
-        {/* Footer */}
         <p className="text-center text-gray-400 mt-6 text-sm">
           © {new Date().getFullYear()} Wisdom Academy
         </p>

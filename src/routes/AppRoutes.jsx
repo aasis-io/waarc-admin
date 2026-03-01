@@ -42,7 +42,6 @@ const AppRoutes = () => {
     <Routes>
       {/* Auth routes */}
       <Route path="/auth/login" element={<Login />} />
-
       {/* Admin routes */}
       <Route
         path="/"
@@ -92,9 +91,8 @@ const AppRoutes = () => {
         <Route path="useful-links" element={<ManageUsefulLinks />} />
         <Route path="useful-links/update/:id" element={<EditUsefulLink />} />
       </Route>
-
       {/* Fallback */}
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/auth/login" replace />} />{" "}
     </Routes>
   );
 };

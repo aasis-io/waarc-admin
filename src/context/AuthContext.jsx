@@ -1,53 +1,56 @@
+// src/context/AuthContext.jsx
 import { createContext, useContext, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Auto-login if token exists in localStorage
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    if (token) {
-      setIsAuthenticated(true);
-      // setUser({ token }); // You can parse token if JWT
-    }
-   
+    const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (accessToken && refreshToken) setIsAuthenticated(true);
+    setIsLoading(false);
   }, []);
 
   const login = async (email, password) => {
     try {
-      const response = await fetch("http://localhost:7000/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       if (!response.ok) throw new Error("Invalid credentials");
 
       const data = await response.json();
-      localStorage.setItem("authToken", data.token); // store token
+      // store both tokens
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
       setIsAuthenticated(true);
-  
+
+      toast.success("Login successful!");
       return { success: true };
     } catch (error) {
-      console.error("Login failed:", error.message);
+      toast.error(error.message || "Login failed!");
       return { success: false, message: error.message };
     }
   };
 
   const logout = () => {
-    localStorage.removeItem("authToken");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
     setIsAuthenticated(false);
-    // setUser(null);
+    toast.success("Logged out successfully!");
   };
 
-
-  // const login = () => setIsAuthenticated(true); // dummy login
-  // const logout = () => setIsAuthenticated(false);
-
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
