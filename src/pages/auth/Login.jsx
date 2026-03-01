@@ -9,11 +9,17 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Dummy login
-    login();
+    const result = await login(email, password);
+    if (!result.success) {
+      // setError(result.message || "Login failed");
+    } else {
+      // redirect to dashboard or homepage
+      window.location.href = "/dashboard";
+    }
   };
+  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#e8e9ed]">
