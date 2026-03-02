@@ -4,9 +4,10 @@ import {
   Image as ImageIcon,
   Save,
   Tag,
-  TextInitial
+  TextInitial,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import { getHomePageDetails, updateHomePageDetails } from "../../services/api";
 
 const HomePageDetails = () => {
@@ -43,9 +44,9 @@ const HomePageDetails = () => {
       const payload = new FormData();
 
       if (formData.bannerImage) {
-        payload.append("bannerImage", formData.bannerImage);
+        payload.append("image", formData.bannerImage);
       }
-
+      payload.append("title", formData.pageTitle);
       payload.append("description", formData.pageSubtitle);
       payload.append("metaTitle", formData.metaTitle);
       payload.append("metaKeywords", formData.metaKeywords);
@@ -54,10 +55,10 @@ const HomePageDetails = () => {
       const response = await updateHomePageDetails(payload);
       console.log("API Response:", response.data);
 
-      alert("Home page updated successfully!");
+      toast.success("Home page updated successfully!");
     } catch (error) {
       console.error("Failed to update home page", error);
-      alert("Failed to update, check console for errors.");
+      toast.error("Failed to update home page. Check console for details.");
     }
   };
 
@@ -69,7 +70,7 @@ const HomePageDetails = () => {
 
         setFormData({
           bannerImage: null,
-          pageTitle: "", // backend does not provide title
+          pageTitle: data.title || "",
           pageSubtitle: data.description || "",
           metaTitle: data.metaTitle || "",
           metaKeywords: data.metaKeywords || "",
@@ -79,11 +80,12 @@ const HomePageDetails = () => {
         if (data.bannerImage) {
           const fullUrl = data.bannerImage.startsWith("http")
             ? data.bannerImage
-            : `${process.env.REACT_APP_API_BASE_URL}${data.bannerImage}`;
+            : `${import.meta.env.VITE_API_BASE_URL}${data.bannerImage}`;
           setImagePreview(fullUrl);
         }
       } catch (error) {
         console.error("Failed to fetch home page details", error);
+        toast.error("Failed to fetch home page details.");
       }
     };
 
@@ -92,6 +94,9 @@ const HomePageDetails = () => {
 
   return (
     <div className="bg-[#e8e9ed] p-6">
+      {/* Toast container */}
+      <Toaster position="top-right" reverseOrder={false} />
+
       <h2 className="mb-6 text-2xl font-bold text-[#172542]">
         Home Page Details
       </h2>
@@ -117,14 +122,35 @@ const HomePageDetails = () => {
             </label>
 
             {imagePreview && (
-              <div className="mt-3">
+              <div className="mt-3 p-4 bg-white rounded-xl border border-gray-200 max-w-xl">
                 <img
                   src={imagePreview}
                   alt="Banner Preview"
-                  className="h-40 w-full max-w-md object-cover rounded-xl border border-gray-200"
+                  className="w-full h-full object-cover rounded-lg"
                 />
               </div>
             )}
+          </div>
+
+          {/* Page Title */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              Page Title (H1)
+            </label>
+            <div className="relative">
+              <TextInitial
+                size={16}
+                className="absolute left-3 top-3 text-gray-400"
+              />
+              <input
+                type="text"
+                name="pageTitle"
+                value={formData.pageTitle}
+                onChange={handleChange}
+                className="w-full rounded-xl border border-gray-300 py-2.5 pl-10 pr-4 text-sm"
+                required
+              />
+            </div>
           </div>
 
           {/* Page Subtitle */}
