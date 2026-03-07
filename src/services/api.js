@@ -6,8 +6,23 @@ import axios from "axios";
  */
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api",
-  withCredentials: true,
 });
+
+/**
+ * Attach JWT access token to every request
+ */
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("accessToken");
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 /**
  * Global response handling (optional but recommended)
@@ -38,9 +53,12 @@ export const getHomePageDetails = async () => {
  * @param {FormData} data
  */
 export const updateHomePageDetails = async (data) => {
+  const token = localStorage.getItem("accessToken");
+
   const response = await api.put("/home", data, {
     headers: {
       "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -88,17 +106,29 @@ export const addTeamMember = async (data) => {
  * Get all Team Members
  */
 export const getTeamMembers = async () => {
-  const response = await api.get("/team");
+  const response = await api.get("/getTeam");
+  return response;
+};
+
+/**
+ * Get a single Team Member by ID
+ * @param {number|string} id
+ */
+export const getTeamMember = async (id) => {
+  const response = await api.get(`/team`, {
+    params: { id }, // sends ?id=123
+  });
   return response;
 };
 
 /**
  * Update a Team Member by ID
- * @param {string} id
+ * @param {number|string} id
  * @param {FormData} data
  */
 export const updateTeamMember = async (id, data) => {
-  const response = await api.put(`/team/${id}`, data, {
+  const response = await api.put(`/team`, data, {
+    params: { id }, // sends ?id=123
     headers: { "Content-Type": "multipart/form-data" },
   });
   return response;
@@ -106,10 +136,12 @@ export const updateTeamMember = async (id, data) => {
 
 /**
  * Delete a Team Member by ID
- * @param {string} id
+ * @param {number|string} id
  */
 export const deleteTeamMember = async (id) => {
-  const response = await api.delete(`/team/${id}`);
+  const response = await api.delete(`/team`, {
+    params: { id }, // sends ?id=123
+  });
   return response;
 };
 /* ------------------------------------------------------------------
@@ -258,6 +290,35 @@ export const updateUsefulLink = async (id, data) => {
  */
 export const deleteUsefulLink = async (id) => {
   const response = await api.delete(`/useful-links/${id}`);
+  return response;
+};
+
+/**
+ * Add Event
+ * @param {FormData} data
+ */
+export const addEvent = async (data) => {
+  const response = await api.post("/event", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response;
+};
+
+/**
+ * Delete Event
+ */
+export const deleteEvent = async (id) => {
+  const response = await api.delete(`/event`);
+  return response;
+};
+
+/**
+ * Get Event
+ */
+export const getEvent = async () => {
+  const response = await api.get("/getEvent");
   return response;
 };
 

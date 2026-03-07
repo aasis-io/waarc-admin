@@ -1,38 +1,56 @@
 import { Briefcase, MapPin, Save, Upload, User } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-// import { getTeamMember, updateTeamMember } from "../../services/api"; // 🔜 backend API
+import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
+import { getTeamMember, updateTeamMember } from "../../services/api";
 
 const EditTeam = () => {
-  const { id: memberId } = useParams(); // get member ID from URL
+  const { id: memberId } = useParams();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     image: null,
     name: "",
     position: "",
     location: "",
   });
-  const [preview, setPreview] = useState(null); // Image preview
+  const [preview, setPreview] = useState(null);
 
-  // Fetch existing team member data
+  // Fetch existing member
   useEffect(() => {
-    // 🔜 Uncomment when API is ready
-    /*
     const fetchMember = async () => {
       try {
         const response = await getTeamMember(memberId);
+        const member = response.data;
+
         setFormData({
-          image: null, // image will be uploaded only if changed
-          name: response.data.name,
-          position: response.data.position,
-          location: response.data.location,
+          image: null, // only upload new image if changed
+          name: member.name || "",
+          position: member.position || "",
+          location: member.location || "",
         });
-        setPreview(response.data.imageUrl); // existing image URL
+
+        // Show existing image preview
+        if (member.image) {
+          const baseUrl = import.meta.env.VITE_API_BASE_URL.replace(/\/$/, ""); // remove trailing slash
+          const fullUrl = member.image.startsWith("http")
+            ? member.image
+            : `${baseUrl}${member.image.startsWith("/") ? "" : "/"}${
+                member.image
+              }`;
+          setPreview(fullUrl);
+        }
       } catch (error) {
         console.error("Failed to fetch team member", error);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Failed to load team member details!",
+        });
       }
     };
+
     fetchMember();
-    */
   }, [memberId]);
 
   const handleChange = (e) => {
@@ -40,18 +58,15 @@ const EditTeam = () => {
   };
 
   const handleImageChange = (e) => {
-    if (e.target.files[0]) {
-      setFormData({ ...formData, image: e.target.files[0] });
-      setPreview(URL.createObjectURL(e.target.files[0]));
+    const file = e.target.files[0];
+    if (file) {
+      setFormData({ ...formData, image: file });
+      setPreview(URL.createObjectURL(file));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitted Team Member:", formData);
-
-    /*
-    🔜 Backend Integration
     try {
       const payload = new FormData();
       if (formData.image) payload.append("image", formData.image);
@@ -59,14 +74,20 @@ const EditTeam = () => {
       payload.append("position", formData.position);
       payload.append("location", formData.location);
 
-      const response = await updateTeamMember(memberId, payload);
-      console.log("API Response:", response.data);
-
-      // Optionally show a success message or navigate back
+      await updateTeamMember(memberId, payload);
+      Swal.fire({
+        icon: "success",
+        title: "Updated!",
+        text: "Team member details updated successfully",
+      });
     } catch (error) {
       console.error("Failed to update team member", error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Failed to update team member!",
+      });
     }
-    */
   };
 
   return (
@@ -82,25 +103,23 @@ const EditTeam = () => {
             <label className="mb-2 block text-sm font-medium text-gray-700">
               Profile Image
             </label>
-            <div>
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-gray-300 px-4 py-3 text-sm text-gray-600 hover:border-[#17254e]">
-                <Upload size={16} />
-                Upload Image
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
-              </label>
-              {formData.image && (
-                <span className="ml-2 text-sm text-gray-500">
-                  {formData.image.name}
-                </span>
-              )}
-            </div>
+            <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-gray-300 px-4 py-3 text-sm text-gray-600 hover:border-[#17254e]">
+              <Upload size={16} />
+              Upload New Image
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+            </label>
+            {formData.image && (
+              <span className="ml-2 text-sm text-gray-500">
+                {formData.image.name}
+              </span>
+            )}
             <span className="block mt-2 text-sm text-gray-500">
-              400 x 400 px
+              Recommended: 400 x 400 px
             </span>
 
             {/* Preview */}
@@ -108,7 +127,7 @@ const EditTeam = () => {
               <div className="mt-4">
                 <img
                   src={preview}
-                  alt="Preview"
+                  alt="Profile Preview"
                   className="h-32 w-32 rounded-xl object-cover border border-gray-300"
                 />
               </div>
