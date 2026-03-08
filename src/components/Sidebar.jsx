@@ -8,7 +8,7 @@ import {
   Link2,
   NotebookText,
   Settings,
-  UserRoundCog
+  UserRoundCog,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
@@ -112,16 +112,14 @@ const Sidebar = ({ open = true }) => {
 
   return (
     <aside
-      className={`min-h-screen bg-white p-6 ${
+      className={`h-screen bg-white p-6 ${
         open ? "w-64" : "w-20"
       } transition-all duration-300 overflow-y-auto`}
     >
-      {/* Logo */}
       <Link to={"/"} className="flex items-center mb-8 cursor-pointer">
         <img src={Logo} alt="Wisdom Academy" className="h-12 w-auto" />
       </Link>
 
-      {/* Navigation */}
       <nav className="flex-1 flex flex-col justify-start">
         {categories.map((cat) => (
           <div key={cat.title} className="mb-6">
