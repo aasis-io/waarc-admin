@@ -1,4 +1,6 @@
 import axios from "axios";
+import toast from "react-hot-toast";
+import router from "../routes/AppRoutes";
 
 /**
  * Axios instance
@@ -6,31 +8,55 @@ import axios from "axios";
  */
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api",
+  timeout: 10000,
 });
 
+let isRedirecting = false; // prevent multiple login redirects
+
 /**
- * Attach JWT access token to every request
+ * Request interceptor
  */
 api.interceptors.request.use(
   (config) => {
+    const publicEndpoints = ["/login"];
+    const isPublic = publicEndpoints.some((endpoint) =>
+      config.url?.endsWith(endpoint)
+    );
+
+    if (isPublic) return config;
+
     const token = localStorage.getItem("accessToken");
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (!token) {
+      if (!isRedirecting) {
+        isRedirecting = true;
+        router.push("/auth/login");
+        toast.error("Please login first!");
+      }
+      return Promise.reject(new Error("No Token"));
     }
 
+    // attach token for protected endpoints
+    config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
   (error) => Promise.reject(error)
 );
 
 /**
- * Global response handling (optional but recommended)
+ * Response interceptor
  */
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error("API Error:", error?.response || error);
+    if (error.response?.status === 401 && !isRedirecting) {
+      isRedirecting = true;
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      toast.error("Session ended! Please login again.");
+      router.push("/login");
+    }
+
     return Promise.reject(error);
   }
 );
@@ -254,7 +280,7 @@ export const getRegisteredMails = async () => {
  * @param {object} data - { title, link }
  */
 export const addUsefulLink = async (data) => {
-  const response = await api.post("/useful-links", data);
+  const response = await api.post("/link", data);
   return response;
 };
 
@@ -262,7 +288,7 @@ export const addUsefulLink = async (data) => {
  * Get all Useful Links
  */
 export const getUsefulLinks = async () => {
-  const response = await api.get("/useful-links");
+  const response = await api.get("/getLink");
   return response.data;
 };
 
@@ -270,8 +296,10 @@ export const getUsefulLinks = async () => {
  * Get single Useful Link by ID
  */
 export const getUsefulLinkById = async (id) => {
-  const response = await api.get(`/useful-links/${id}`);
-  return response.data;
+  const response = await api.get(`/link`, {
+    params: { id },
+  });
+  return response;
 };
 
 /**
@@ -280,7 +308,9 @@ export const getUsefulLinkById = async (id) => {
  * @param {object} data
  */
 export const updateUsefulLink = async (id, data) => {
-  const response = await api.put(`/useful-links/${id}`, data);
+  const response = await api.put(`/link`, data, {
+    params: { id }, // sends ?id=123
+  });
   return response;
 };
 
@@ -289,7 +319,9 @@ export const updateUsefulLink = async (id, data) => {
  * @param {string} id
  */
 export const deleteUsefulLink = async (id) => {
-  const response = await api.delete(`/useful-links/${id}`);
+  const response = await api.delete(`/link`, {
+    params: { id },
+  });
   return response;
 };
 

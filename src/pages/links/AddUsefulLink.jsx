@@ -1,6 +1,7 @@
 import { Save } from "lucide-react";
 import React, { useState } from "react";
-// import { addUsefulLink } from "../../services/api";
+import toast from "react-hot-toast";
+import { addUsefulLink } from "../../services/api"; // make sure this exists
 
 const AddUsefulLink = () => {
   const [formData, setFormData] = useState({ title: "", link: "" });
@@ -13,16 +14,15 @@ const AddUsefulLink = () => {
     e.preventDefault();
     console.log("Submitted Useful Link:", formData);
 
-    /*
-    🔜 BACKEND INTEGRATION
     try {
       const response = await addUsefulLink(formData);
       console.log("API Response:", response.data);
       setFormData({ title: "", link: "" });
+      toast.success("Useful link added successfully!");
     } catch (error) {
       console.error("Failed to add useful link", error);
+      toast.error("Failed to add useful link. Please try again.");
     }
-    */
   };
 
   return (

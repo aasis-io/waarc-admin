@@ -1,8 +1,8 @@
 import { Trash2, UserPen } from "lucide-react";
 import React, { useEffect, useState } from "react";
-// import { getUsefulLinks, deleteUsefulLink } from "../../services/api";
 import { Link } from "react-router-dom";
 import swal from "sweetalert2";
+import { deleteUsefulLink, getUsefulLinks } from "../../services/api"; // make sure these exist
 
 const ManageUsefulLinks = () => {
   const [links, setLinks] = useState([]);
@@ -12,22 +12,8 @@ const ManageUsefulLinks = () => {
     const fetchLinks = async () => {
       setLoading(true);
       try {
-        // const data = await getUsefulLinks();
-        // setLinks(data);
-
-        // Mock Data
-        setLinks([
-          {
-            id: 1,
-            title: "Nepal Tourism",
-            link: "https://www.welcomenepal.com",
-          },
-          {
-            id: 2,
-            title: "Himalayan Research",
-            link: "https://www.himalayanresearch.org",
-          },
-        ]);
+        const data = await getUsefulLinks();
+        setLinks(data);
       } catch (error) {
         console.error("Error fetching links:", error);
         swal.fire("Error", "Failed to fetch links", "error");
@@ -41,26 +27,25 @@ const ManageUsefulLinks = () => {
   const handleDelete = async (id) => {
     const result = await swal.fire({
       title: "Are you sure?",
-      text: "Once deleted, you will not be able to recover this link!",
+      text: "This action cannot be undone!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Delete",
-      cancelButtonText: "Cancel",
-      reverseButtons: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
     });
 
     if (!result.isConfirmed) return;
 
     try {
-      // await deleteUsefulLink(id);
-      setLinks(links.filter((l) => l.id !== id));
+      await deleteUsefulLink(id);
+      setLinks((prev) => prev.filter((l) => l.id !== id));
       swal.fire("Deleted!", "Link has been deleted.", "success");
     } catch (error) {
       console.error("Error deleting link:", error);
-      swal.fire("Error", "Failed to delete link", "error");
+      swal.fire("Error!", "Failed to delete link.", "error");
     }
   };
-
   if (loading) return <div className="p-6 text-gray-600">Loading links...</div>;
 
   return (

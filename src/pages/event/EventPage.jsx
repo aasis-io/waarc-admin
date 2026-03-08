@@ -19,11 +19,8 @@ const EMPTY_FORM = {
   imagePreview: "",
 };
 
-/** Parse a YYYY-MM-DD string without timezone shift */
 const parseLocalDate = (dateStr) => {
   if (!dateStr) return null;
-
-  // Replace space between date and time with 'T' to make it ISO compliant
   const isoStr = dateStr.replace(" ", "T");
 
   const d = new Date(isoStr);

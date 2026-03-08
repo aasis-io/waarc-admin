@@ -7,7 +7,7 @@ import {
   TextInitial,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { getHomePageDetails, updateHomePageDetails } from "../../services/api";
 
 const HomePageDetails = () => {
@@ -94,9 +94,6 @@ const HomePageDetails = () => {
 
   return (
     <div className="bg-[#e8e9ed] p-6">
-      {/* Toast container */}
-      <Toaster position="top-right" reverseOrder={false} />
-
       <h2 className="mb-6 text-2xl font-bold text-[#172542]">
         Home Page Details
       </h2>
@@ -147,6 +144,7 @@ const HomePageDetails = () => {
                 name="pageTitle"
                 value={formData.pageTitle}
                 onChange={handleChange}
+                placeholder="Enter the main page title"
                 className="w-full rounded-xl border border-gray-300 py-2.5 pl-10 pr-4 text-sm"
                 required
               />
@@ -167,6 +165,7 @@ const HomePageDetails = () => {
                 name="pageSubtitle"
                 value={formData.pageSubtitle}
                 onChange={handleChange}
+                placeholder="Enter a subtitle for the page"
                 className="w-full rounded-md border border-gray-300 p-2 pl-10 text-sm"
                 rows={4}
               />
@@ -193,6 +192,7 @@ const HomePageDetails = () => {
                   name="metaTitle"
                   value={formData.metaTitle}
                   onChange={handleChange}
+                  placeholder="Enter SEO meta title"
                   className="w-full rounded-xl border border-gray-300 py-2.5 pl-10 pr-4 text-sm"
                 />
               </div>
@@ -212,6 +212,7 @@ const HomePageDetails = () => {
                   name="metaKeywords"
                   value={formData.metaKeywords}
                   onChange={handleChange}
+                  placeholder="Enter comma-separated keywords"
                   className="w-full rounded-xl border border-gray-300 py-2.5 pl-10 pr-4 text-sm"
                 />
               </div>
@@ -230,6 +231,7 @@ const HomePageDetails = () => {
                   name="metaDescription"
                   value={formData.metaDescription}
                   onChange={handleChange}
+                  placeholder="Enter meta description for SEO"
                   className="w-full rounded-xl border border-gray-300 py-2.5 pl-10 pr-4 text-sm"
                   rows={3}
                 />

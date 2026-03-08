@@ -1,25 +1,22 @@
 import { Save } from "lucide-react";
 import React, { useEffect, useState } from "react";
-// import { getUsefulLinkById, updateUsefulLink } from "../../services/api";
-import { useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+import { useNavigate, useParams } from "react-router-dom";
+import { getUsefulLinkById, updateUsefulLink } from "../../services/api";
 
 const EditUsefulLink = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({ title: "", link: "" });
 
   useEffect(() => {
     const fetchLink = async () => {
       try {
-        // const data = await getUsefulLinkById(id);
-        // setFormData(data);
-
-        // Mock
-        setFormData({
-          title: "Nepal Tourism",
-          link: "https://www.welcomenepal.com",
-        });
+        const { data } = await getUsefulLinkById(id);
+        setFormData(data);
       } catch (error) {
         console.error("Failed to fetch link:", error);
+        toast.error("Failed to load the link. Please try again.");
       }
     };
     fetchLink();
@@ -30,17 +27,14 @@ const EditUsefulLink = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Updated Useful Link:", formData);
-
-    /*
-    🔜 BACKEND
     try {
       const response = await updateUsefulLink(id, formData);
       console.log("API Response:", response.data);
+      toast.success("Link updated successfully!");
     } catch (error) {
       console.error("Failed to update link", error);
+      toast.error("Failed to update the link. Please try again.");
     }
-    */
   };
 
   return (

@@ -1,7 +1,7 @@
 import { Briefcase, MapPin, Save, Upload, User } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
-import Swal from "sweetalert2";
 import { getTeamMember, updateTeamMember } from "../../services/api";
 
 const EditTeam = () => {
@@ -24,15 +24,14 @@ const EditTeam = () => {
         const member = response.data;
 
         setFormData({
-          image: null, // only upload new image if changed
+          image: null,
           name: member.name || "",
           position: member.position || "",
           location: member.location || "",
         });
 
-        // Show existing image preview
         if (member.image) {
-          const baseUrl = import.meta.env.VITE_API_BASE_URL.replace(/\/$/, ""); // remove trailing slash
+          const baseUrl = import.meta.env.VITE_API_BASE_URL.replace(/\/$/, "");
           const fullUrl = member.image.startsWith("http")
             ? member.image
             : `${baseUrl}${member.image.startsWith("/") ? "" : "/"}${
@@ -42,11 +41,7 @@ const EditTeam = () => {
         }
       } catch (error) {
         console.error("Failed to fetch team member", error);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Failed to load team member details!",
-        });
+        toast.error("Failed to load team member details!");
       }
     };
 
@@ -67,6 +62,7 @@ const EditTeam = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const payload = new FormData();
       if (formData.image) payload.append("image", formData.image);
@@ -74,19 +70,16 @@ const EditTeam = () => {
       payload.append("position", formData.position);
       payload.append("location", formData.location);
 
-      await updateTeamMember(memberId, payload);
-      Swal.fire({
-        icon: "success",
-        title: "Updated!",
-        text: "Team member details updated successfully",
-      });
+      // Call API
+      const response = await updateTeamMember(memberId, payload);
+
+      console.log("Update response:", response); // <-- debug line
+
+      // Show toast
+      toast.success("Team member details updated successfully");
     } catch (error) {
-      console.error("Failed to update team member", error);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Failed to update team member!",
-      });
+      console.error("Update failed:", error);
+      toast.error("Failed to update team member!");
     }
   };
 

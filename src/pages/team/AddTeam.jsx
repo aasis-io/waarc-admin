@@ -46,9 +46,8 @@ const AddTeam = () => {
     try {
       await addTeamMember(payload);
 
-      toast.success("Team member added successfully!", {
-        id: toastId,
-      });
+      // Update the loading toast to success
+      toast.success("Team member added successfully!", { id: toastId });
 
       // Reset form
       setFormData({
@@ -59,9 +58,12 @@ const AddTeam = () => {
       });
       setPreview(null);
     } catch (error) {
+      // Update the loading toast to error
       toast.error(
         error?.response?.data?.message || "Failed to add team member",
-        { id: toastId }
+        {
+          id: toastId,
+        }
       );
     } finally {
       setLoading(false);
