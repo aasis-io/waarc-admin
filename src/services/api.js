@@ -7,7 +7,7 @@ import router from "../routes/AppRoutes";
  * Change baseURL when deploying
  */
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:7001",
   timeout: 10000,
 });
 
