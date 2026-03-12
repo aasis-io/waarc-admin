@@ -152,7 +152,6 @@ const Settings = () => {
           })}
         </div>
 
-        {/* Save Button */}
         <div className="mt-8 flex justify-end">
           <button
             onClick={handleSubmit}

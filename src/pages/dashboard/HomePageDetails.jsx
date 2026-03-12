@@ -2,6 +2,7 @@ import {
   AlignLeft,
   FileText,
   Image as ImageIcon,
+  Loader2,
   Save,
   Tag,
   TextInitial,
@@ -21,6 +22,7 @@ const HomePageDetails = () => {
   });
 
   const [imagePreview, setImagePreview] = useState(null);
+  const [isSaving, setIsSaving] = useState(false); // loading state
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,6 +41,7 @@ const HomePageDetails = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSaving(true); // start saving
 
     try {
       const payload = new FormData();
@@ -59,6 +62,8 @@ const HomePageDetails = () => {
     } catch (error) {
       console.error("Failed to update home page", error);
       toast.error("Failed to update home page. Check console for details.");
+    } finally {
+      setIsSaving(false); // stop saving
     }
   };
 
@@ -243,10 +248,22 @@ const HomePageDetails = () => {
           <div className="flex justify-end pt-4">
             <button
               type="submit"
-              className="flex items-center gap-2 rounded-xl bg-[#17254e] px-6 py-2.5 text-sm text-white"
+              disabled={isSaving}
+              className={`flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm text-white ${
+                isSaving ? "bg-gray-400 cursor-not-allowed" : "bg-[#17254e]"
+              }`}
             >
-              <Save size={16} />
-              Save Page Details
+              {isSaving ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save size={16} />
+                  Save Page Details
+                </>
+              )}
             </button>
           </div>
         </form>
