@@ -21,7 +21,7 @@ const ManageMails = () => {
         setLoading(false);
       }
     };
-  
+
     fetchMails();
   }, []);
 
@@ -93,7 +93,7 @@ const ManageMails = () => {
                   <div className="flex justify-center gap-2">
                     <button
                       onClick={() => handleDelete(mail.id)}
-                      className="flex items-center gap-1 px-3 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 font-medium text-sm transition-colors"
+                      className="flex items-center cursor-pointer gap-1 px-3 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 font-medium text-sm transition-colors"
                     >
                       <Trash2 size={16} />
                       Delete
