@@ -230,7 +230,7 @@ export const deleteJournal = async (id) => {
  * Get site settings
  */
 export const getSettings = async () => {
-  const response = await api.get("/settings");
+  const response = await api.get("/getSiteSettings");
   return response;
 };
 
@@ -239,7 +239,7 @@ export const getSettings = async () => {
  * @param {object} data - settings fields (JSON)
  */
 export const updateSettings = async (data) => {
-  const response = await api.put("/settings", data, {
+  const response = await api.put("/siteSettings", data, {
     headers: { "Content-Type": "application/json" },
   });
   return response;
