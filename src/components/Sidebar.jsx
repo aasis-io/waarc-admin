@@ -71,8 +71,8 @@ const categories = [
         icon: <Clapperboard size={16} />,
         children: [
           { name: "Add Image", path: "/images/add" },
-          { name: "Add Video", path: "/videos/add" },
           { name: "Manage Images", path: "/images" },
+          { name: "Add Video", path: "/videos/add" },
           { name: "Manage Videos", path: "/videos" },
         ],
       },

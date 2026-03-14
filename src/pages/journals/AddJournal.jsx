@@ -2,25 +2,29 @@ import {
   Calendar,
   FileText,
   Image as ImageIcon,
+  Link as LinkIcon,
+  Loader2,
   Save,
   Tag,
   Upload,
   User,
 } from "lucide-react";
 import React, { useState } from "react";
-// import { addJournal } from "../../services/api"; // Uncomment when backend is ready
 
 const AddJournal = () => {
   const [formData, setFormData] = useState({
     title: "",
     authors: "",
-    category: "Journals",
+    category: "",
     publishedDate: "",
     image: null,
     pdf: null,
+    pdfLink: "",
   });
 
   const [imagePreview, setImagePreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,18 +32,41 @@ const AddJournal = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setFormData({ ...formData, [e.target.name]: file });
+    if (!file) return;
 
-    // Show image preview for cover image only
-    if (e.target.name === "image" && file) {
+    // Image validation
+    if (e.target.name === "image") {
+      if (file.size > 6 * 1024 * 1024) {
+        setError("Cover image must be smaller than 6MB.");
+        return;
+      }
+      setError("");
       const reader = new FileReader();
       reader.onloadend = () => setImagePreview(reader.result);
       reader.readAsDataURL(file);
     }
+
+    // PDF validation
+    if (e.target.name === "pdf") {
+      if (file.size > 10 * 1024 * 1024) {
+        setError("PDF file must be smaller than 10MB.");
+        return;
+      }
+      setError("");
+    }
+
+    setFormData({ ...formData, [e.target.name]: file });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.pdf && !formData.pdfLink) {
+      alert("Please provide either a PDF file or a PDF link.");
+      return;
+    }
+
+    setLoading(true);
 
     const data = new FormData();
     data.append("title", formData.title);
@@ -48,19 +75,26 @@ const AddJournal = () => {
     data.append("publishedDate", formData.publishedDate);
     if (formData.image) data.append("image", formData.image);
     if (formData.pdf) data.append("pdf", formData.pdf);
+    if (formData.pdfLink) data.append("pdfLink", formData.pdfLink);
 
     console.log("Journal Data (backend-ready):");
     for (let pair of data.entries()) {
       console.log(pair[0], ":", pair[1]);
     }
 
-    // Uncomment when backend is ready
-    // try {
-    //   const response = await addJournal(data);
-    //   console.log("Journal saved:", response);
-    // } catch (error) {
-    //   console.error("Error saving journal:", error);
-    // }
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    setFormData({
+      title: "",
+      authors: "",
+      category: "",
+      publishedDate: "",
+      image: null,
+      pdf: null,
+      pdfLink: "",
+    });
+    setImagePreview(null);
+    setLoading(false);
   };
 
   return (
@@ -106,7 +140,7 @@ const AddJournal = () => {
                 name="authors"
                 value={formData.authors}
                 onChange={handleChange}
-                placeholder="Author One, Author Two, Author Three"
+                placeholder="Author One, Author Two"
                 className="w-full rounded-xl border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:border-[#17254e] focus:outline-none"
                 required
               />
@@ -131,7 +165,11 @@ const AddJournal = () => {
                 value={formData.category}
                 onChange={handleChange}
                 className="w-full appearance-none rounded-xl border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:border-[#17254e] focus:outline-none"
+                required
               >
+                <option value="" disabled>
+                  Select category
+                </option>
                 <option value="journals">Journals</option>
                 <option value="publications">Our Publications</option>
               </select>
@@ -164,6 +202,9 @@ const AddJournal = () => {
             <label className="mb-2 block text-sm font-medium text-gray-700">
               Cover Image
             </label>
+            <p className="mb-2 text-xs text-gray-500">
+              Recommended: 600 × 450 px, max 6MB
+            </p>
             <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-gray-300 px-4 py-3 text-sm text-gray-600 hover:border-[#17254e]">
               <ImageIcon size={16} />
               Upload Image
@@ -192,8 +233,9 @@ const AddJournal = () => {
           {/* PDF Upload */}
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
-              Journal PDF
+              Journal PDF (Optional if using Link)
             </label>
+            <p className="mb-2 text-xs text-gray-500">Max file size: 10MB</p>
             <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-gray-300 px-4 py-3 text-sm text-gray-600 hover:border-[#17254e]">
               <Upload size={16} />
               Upload PDF
@@ -203,7 +245,6 @@ const AddJournal = () => {
                 name="pdf"
                 onChange={handleFileChange}
                 className="hidden"
-                required
               />
             </label>
             {formData.pdf && (
@@ -213,14 +254,47 @@ const AddJournal = () => {
             )}
           </div>
 
+          {/* PDF Link */}
+          <div>
+            <label className="mb-2 block text-sm font-medium text-gray-700">
+              OR PDF Link (Google Drive / Other)
+            </label>
+            <div className="relative">
+              <LinkIcon
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              />
+              <input
+                type="url"
+                name="pdfLink"
+                value={formData.pdfLink}
+                onChange={handleChange}
+                placeholder="https://drive.google.com/..."
+                className="w-full rounded-xl border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:border-[#17254e] focus:outline-none"
+              />
+            </div>
+          </div>
+
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+
           {/* Submit */}
           <div className="flex justify-end pt-4">
             <button
               type="submit"
-              className="flex items-center gap-2 rounded-xl bg-[#17254e] cursor-pointer px-6 py-2.5 text-sm font-medium text-white shadow-lg hover:opacity-95"
+              disabled={loading}
+              className="flex items-center gap-2 rounded-xl bg-[#17254e] px-6 py-2.5 text-sm font-medium text-white shadow-lg hover:opacity-95 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              <Save size={16} />
-              Save Journal
+              {loading ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save size={16} />
+                  Save Journal
+                </>
+              )}
             </button>
           </div>
         </form>

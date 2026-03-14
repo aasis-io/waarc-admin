@@ -314,6 +314,9 @@ const EventPage = () => {
                   (optional)
                 </span>
               </label>
+              <p className="mb-2 text-xs text-gray-500">
+                Recommended size: 600 × 450 px
+              </p>
 
               {form.imagePreview ? (
                 <div className="relative w-full h-52 rounded-2xl overflow-hidden border border-gray-200">
@@ -345,11 +348,11 @@ const EventPage = () => {
                   onDrop={handleDrop}
                   onClick={() => fileInputRef.current?.click()}
                   className={`flex flex-col items-center justify-center gap-2 w-full h-40 rounded-2xl border-2 border-dashed cursor-pointer transition-colors
-                    ${
-                      dragOver
-                        ? "border-[#17254e] bg-blue-50"
-                        : "border-gray-300 hover:border-[#17254e] hover:bg-gray-50"
-                    }`}
+        ${
+          dragOver
+            ? "border-[#17254e] bg-blue-50"
+            : "border-gray-300 hover:border-[#17254e] hover:bg-gray-50"
+        }`}
                 >
                   <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
                     <ImageIcon size={18} className="text-gray-400" />

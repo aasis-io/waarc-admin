@@ -1,6 +1,5 @@
 import { ChevronDown, LogOut, Search } from "lucide-react";
-
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Logo from "./../assets/images/wisdom.png";
@@ -8,12 +7,13 @@ import Logo from "./../assets/images/wisdom.png";
 const Navbar = () => {
   const { logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const user = {
     name: "Wisdom Academy",
     username: "Admin",
     email: "waarc_admin@login.com",
-    avatar:  Logo ,
+    avatar: Logo,
   };
 
   const dropdownItems = [
@@ -27,8 +27,23 @@ const Navbar = () => {
     },
   ];
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="flex justify-between items-center mb-6 bg-white px-8 py-2">
+      {/* Search */}
       <div className="flex items-center w-full max-w-md">
         <div className="relative w-full">
           <Search
@@ -42,23 +57,31 @@ const Navbar = () => {
           />
         </div>
       </div>
-      {/* Right: Profile */}
-      <div className="relative">
+
+      {/* Profile */}
+      <div className="relative" ref={dropdownRef}>
         <button
           onClick={() => setDropdownOpen(!dropdownOpen)}
-          className="flex items-center gap-2 px-4 py-2 bg-white rounded-3xl cursor-pointer"
+          className="flex items-center gap-2 px-4 py-2 bg-white rounded-3xl cursor-pointer hover:bg-gray-200 transition"
         >
           <img
             src={user.avatar}
             alt="User Avatar"
-            className="w-8 h-8 rounded-full"
+            className="w-8 h-8 rounded-full object-cover"
           />
+
           <span className="text-gray-700 font-medium">{user.username}</span>
-          <ChevronDown size={16} className="text-gray-500" />
+
+          <ChevronDown
+            size={16}
+            className={`text-gray-500 transition-transform duration-200 ${
+              dropdownOpen ? "rotate-180" : ""
+            }`}
+          />
         </button>
 
         {dropdownOpen && (
-          <div className="absolute right-0 mt-2 w-52 bg-white shadow-2xl rounded-2xl py-2 z-50">
+          <div className="absolute right-0 mt-2 w-56 bg-white shadow-xl border border-gray-100 rounded-2xl py-2 z-50">
             <div className="px-4 py-2 border-b border-gray-200 mb-2">
               <p className="text-gray-800 font-semibold">{user.name}</p>
               <p className="text-gray-500 text-sm">{user.email}</p>
@@ -68,9 +91,10 @@ const Navbar = () => {
               <Link
                 key={index}
                 onClick={item.action}
-                className={`flex items-center gap-2 w-full text-left px-4 py-3 ${item.color} ${item.hoverBg} ${item.rounded} font-medium text-sm hover:cursor-pointer transition-colors`}
+                className={`flex items-center gap-2 w-full px-4 py-3 ${item.color} ${item.hoverBg} ${item.rounded} text-sm font-medium transition`}
               >
-                {item.icon} {item.label}
+                {item.icon}
+                {item.label}
               </Link>
             ))}
           </div>
