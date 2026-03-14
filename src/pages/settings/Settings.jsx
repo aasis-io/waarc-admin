@@ -163,7 +163,7 @@ const Settings = () => {
           <button
             onClick={handleSubmit}
             disabled={isSaving}
-            className={`flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-all ${
+            className={`flex items-center cursor-pointer gap-2 rounded-xl px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-all ${
               isSaving
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-[#172542] hover:opacity-95"

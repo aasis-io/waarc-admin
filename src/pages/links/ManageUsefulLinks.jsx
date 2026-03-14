@@ -54,56 +54,77 @@ const ManageUsefulLinks = () => {
         Manage Useful Links
       </h2>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full overflow-hidden rounded-2xl bg-white shadow-lg">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-gray-600">
-                SN
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-gray-600">
-                Title
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-gray-600">
-                Link
-              </th>
-              <th className="px-6 py-3 text-center text-sm font-medium uppercase tracking-wider text-gray-600">
-                Action
-              </th>
-            </tr>
-          </thead>
-
-          <tbody className="divide-y divide-gray-200">
-            {links.map((link, index) => (
-              <tr key={link.id} className="transition-colors hover:bg-gray-50">
-                <td className="whitespace-nowrap px-6 py-4">{index + 1}</td>
-                <td className="px-6 py-4 text-gray-800 font-medium">
-                  {link.title}
-                </td>
-                <td className="px-6 py-4 text-blue-600 hover:underline">
-                  <a href={link.link} target="_blank" rel="noopener noreferrer">
-                    {link.link}
-                  </a>
-                </td>
-                <td className="flex justify-center gap-3 px-6 py-4 text-center">
-                  <Link
-                    to={`/useful-links/update/${link.id}`}
-                    className="flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-600 cursor-pointer hover:bg-blue-100 hover:text-blue-800"
-                  >
-                    <UserPen size={16} /> Edit
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(link.id)}
-                    className="flex items-center gap-1 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600 cursor-pointer hover:bg-red-100 hover:text-red-800"
-                  >
-                    <Trash2 size={16} /> Delete
-                  </button>
-                </td>
+      {links.length === 0 ? (
+        <div className="flex flex-col items-center justify-center rounded-xl bg-white p-10 shadow">
+          <p className="text-lg font-medium text-gray-600">
+            No useful links added yet.
+          </p>
+          <Link
+            to="/useful-links/add"
+            className="mt-4 rounded-lg bg-blue-600 px-5 py-2 text-white hover:bg-blue-700"
+          >
+            Add Useful Link
+          </Link>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full overflow-hidden rounded-2xl bg-white shadow-lg">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-gray-600">
+                  SN
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-gray-600">
+                  Title
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-gray-600">
+                  Link
+                </th>
+                <th className="px-6 py-3 text-center text-sm font-medium uppercase tracking-wider text-gray-600">
+                  Action
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+
+            <tbody className="divide-y divide-gray-200">
+              {links.map((link, index) => (
+                <tr
+                  key={link.id}
+                  className="transition-colors hover:bg-gray-50"
+                >
+                  <td className="whitespace-nowrap px-6 py-4">{index + 1}</td>
+                  <td className="px-6 py-4 font-medium text-gray-800">
+                    {link.title}
+                  </td>
+                  <td className="px-6 py-4 text-blue-600 hover:underline">
+                    <a
+                      href={link.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {link.link}
+                    </a>
+                  </td>
+                  <td className="flex justify-center gap-3 px-6 py-4 text-center">
+                    <Link
+                      to={`/useful-links/update/${link.id}`}
+                      className="flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-600 hover:bg-blue-100 hover:text-blue-800"
+                    >
+                      <UserPen size={16} /> Edit
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(link.id)}
+                      className="flex items-center gap-1 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-100 hover:text-red-800"
+                    >
+                      <Trash2 size={16} /> Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };
