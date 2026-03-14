@@ -10,13 +10,12 @@ import {
   User,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
-import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+import { useParams } from "react-router-dom";
 import { getJournalById, updateJournal } from "../../services/api";
 
 const EditJournal = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     title: "",
@@ -121,7 +120,6 @@ const EditJournal = () => {
       await updateJournal(id, data);
 
       toast.success("Journal updated successfully!");
-      navigate("/journals/manage");
     } catch (err) {
       console.error("Error updating journal:", err);
       const message = err.response?.data?.message || "Failed to update journal";
@@ -133,7 +131,6 @@ const EditJournal = () => {
 
   return (
     <div className="bg-[#e8e9ed] p-6">
-      <Toaster position="top-right" />
       <h2 className="mb-6 text-2xl font-bold text-[#172542]">Edit Journal</h2>
 
       <div className="max-w-6xl rounded-3xl bg-white p-8 shadow-xl">

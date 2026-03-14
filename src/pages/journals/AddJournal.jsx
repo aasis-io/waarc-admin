@@ -10,7 +10,7 @@ import {
   User,
 } from "lucide-react";
 import React, { useState } from "react";
-import toast, { Toaster } from "react-hot-toast"; // <-- Import toast
+import toast from "react-hot-toast"; // <-- Import toast
 import { addJournal } from "../../services/api";
 
 const AddJournal = () => {
@@ -113,8 +113,7 @@ const AddJournal = () => {
 
   return (
     <div className="bg-[#e8e9ed] p-6">
-      {/* Toast container */}
-      <Toaster position="top-right" />
+  
 
       <h2 className="mb-6 text-2xl font-bold text-[#172542]">Add Journal</h2>
 
