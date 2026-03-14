@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { getSettings, updateSettings } from "../services/api";
+import { getSettings, updateSettings } from "../../services/api";
 
 const basicFields = [
   { label: "Site Name", name: "siteName", icon: Globe, type: "text" },

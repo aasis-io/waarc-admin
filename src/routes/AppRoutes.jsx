@@ -29,8 +29,8 @@ import ManageUsefulLinks from "../pages/links/ManageUsefulLinks";
 import EventPage from "../pages/event/EventPage";
 import EditImage from "../pages/media/EditImage";
 import EditVideo from "../pages/media/EditVideo";
+import Settings from "../pages/settings/Settings";
 import Users from "../pages/users/Users";
-import Settings from "../settings/Settings";
 
 // Protected Route wrapper with loading check
 const ProtectedRoute = ({ children }) => {
