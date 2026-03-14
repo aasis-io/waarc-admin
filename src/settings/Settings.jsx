@@ -89,7 +89,7 @@ const Settings = () => {
 
   return (
     <div className="bg-[#e8e9ed] p-6">
-      <h2 className="text-2xl font-bold text-[#172542] mb-6">Site Settings</h2>
+      <h2 className="text-2xl font-bold text-[#172542] mb-6">Site Information</h2>
 
       <div className="bg-white rounded-2xl shadow-md p-6 max-w-6xl">
         {/* Basic Info */}

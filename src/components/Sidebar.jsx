@@ -81,7 +81,7 @@ const categories = [
   {
     title: "Management",
     items: [
-      { name: "Settings", path: "/settings", icon: <Settings size={16} /> },
+      { name: "Site Info", path: "/settings", icon: <Settings size={16} /> },
     ],
   },
 ];

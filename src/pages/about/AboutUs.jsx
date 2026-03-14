@@ -5,23 +5,18 @@ import {
   Save,
   Tag,
 } from "lucide-react";
-import React, { useState } from "react";
-import RichTextEditor from "../../components/RichTextEditor";
-
-// import { getAboutUsDetails, updateAboutUsDetails } from "../../services/api";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { getAboutUsDetails, updateAboutUsDetails } from "../../services/api";
 
 const AboutUs = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     image: null,
-
-    // SEO
     metaTitle: "",
     metaKeywords: "",
     metaDescription: "",
-
-    // Why Us (fixed 4)
     whyUs: [
       { title: "", description: "" },
       { title: "", description: "" },
@@ -30,8 +25,10 @@ const AboutUs = () => {
     ],
   });
 
-  const [imagePreview, setImagePreview] = useState(null); // ✅ image preview
+  const [imagePreview, setImagePreview] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
+  /* -------------------- Handlers -------------------- */
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -55,12 +52,7 @@ const AboutUs = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // ✅ FOR NOW: just log form data
-    console.log("About Us Data:", formData);
-
-    /*
-    🔜 BACKEND INTEGRATION
+    setIsSaving(true);
 
     try {
       const payload = new FormData();
@@ -70,20 +62,21 @@ const AboutUs = () => {
       payload.append("metaTitle", formData.metaTitle);
       payload.append("metaKeywords", formData.metaKeywords);
       payload.append("metaDescription", formData.metaDescription);
-      payload.append("whyUs", JSON.stringify(formData.whyUs)); // array as string
+      payload.append("whyUs", JSON.stringify(formData.whyUs));
 
       const response = await updateAboutUsDetails(payload);
       console.log("API Response:", response.data);
+
+      toast.success("About Us page updated successfully!");
     } catch (error) {
       console.error("Failed to update About Us", error);
+      toast.error("Failed to update About Us page. Check console for details.");
+    } finally {
+      setIsSaving(false);
     }
-    */
   };
 
-  /* ------------------------------------------------------------------
-     Fetch default About Us details on mount
-  ------------------------------------------------------------------- */
-  /*
+  /* -------------------- Fetch existing data -------------------- */
   useEffect(() => {
     const fetchDetails = async () => {
       try {
@@ -92,63 +85,90 @@ const AboutUs = () => {
 
         setFormData({
           title: data.title || "",
-          description: data.description || "",
-          image: null, // new image upload
+          description: data.description
+            ? data.description.replace(/<\/?[^>]+(>|$)/g, "") // strip HTML tags
+            : "",
+          image: null,
           metaTitle: data.metaTitle || "",
           metaKeywords: data.metaKeywords || "",
           metaDescription: data.metaDescription || "",
-          whyUs: data.whyUs || [
-            { title: "", description: "" },
-            { title: "", description: "" },
-            { title: "", description: "" },
-            { title: "", description: "" },
-          ],
+          whyUs:
+            data.whyUs?.length === 4
+              ? data.whyUs
+              : [
+                  { title: "", description: "" },
+                  { title: "", description: "" },
+                  { title: "", description: "" },
+                  { title: "", description: "" },
+                ],
         });
 
-        // ✅ Show existing image
-        if (data.imageUrl) setImagePreview(data.imageUrl);
+        // Show existing image
+        if (data.image) {
+          const baseUrl = import.meta.env.VITE_API_BASE_URL.replace(/\/$/, "");
+          const fullUrl = data.image.startsWith("http")
+            ? data.image
+            : `${baseUrl}${data.image.startsWith("/") ? "" : "/"}${data.image}`;
+          setImagePreview(fullUrl);
+        }
       } catch (error) {
         console.error("Failed to fetch About Us details", error);
+        toast.error("Failed to fetch About Us page details.");
       }
     };
 
     fetchDetails();
   }, []);
-  */
 
+  /* -------------------- JSX -------------------- */
   return (
     <div className="bg-[#e8e9ed] p-6">
       <h2 className="text-2xl font-bold text-[#172542] mb-6">About Us</h2>
 
       <div className="max-w-6xl rounded-3xl bg-white p-8 shadow-xl">
         <form onSubmit={handleSubmit} className="space-y-10">
-          {/* ===== Page Content ===== */}
+          {/* Page Content */}
           <section>
             <h3 className="text-lg font-semibold text-[#172542] mb-4">
               Page Content
             </h3>
 
             {/* Title */}
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              placeholder="Page title (H1)"
-              className="w-full mb-4 rounded-xl border px-4 py-2.5 text-sm"
-              required
-            />
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Page Title
+              </label>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                placeholder="Page title (H1)"
+                className="w-full rounded-xl border px-4 py-2.5 text-sm"
+                required
+              />
+            </div>
 
             {/* Description */}
-            <RichTextEditor
-              value={formData.description}
-              onChange={(html) =>
-                setFormData({ ...formData, description: html })
-              }
-            />
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Description
+              </label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                rows={6}
+                placeholder="Enter page description"
+                className="w-full rounded-xl border px-4 py-2.5 text-sm"
+              />
+            </div>
 
-            {/* Image */}
-            <div className="mt-4">
+            {/* Image Upload */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Banner Image
+              </label>
               <label className="inline-flex items-center gap-2 cursor-pointer rounded-xl border border-dashed px-4 py-3 text-sm text-gray-600">
                 <ImageIcon size={16} />
                 Upload Image
@@ -160,7 +180,6 @@ const AboutUs = () => {
                 />
               </label>
 
-              {/* ✅ Image Preview */}
               {imagePreview && (
                 <div className="mt-3">
                   <img
@@ -173,15 +192,17 @@ const AboutUs = () => {
             </div>
           </section>
 
-          {/* ===== Why Us ===== */}
+          {/* Why Us */}
           <section>
             <h3 className="text-lg font-semibold text-[#172542] mb-6">
               Why Us
             </h3>
-
             <div className="grid md:grid-cols-2 gap-6">
               {formData.whyUs.map((item, index) => (
                 <div key={index} className="rounded-2xl border p-5 space-y-3">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Title {index + 1}
+                  </label>
                   <input
                     type="text"
                     placeholder={`Why Us Title ${index + 1}`}
@@ -192,6 +213,9 @@ const AboutUs = () => {
                     className="w-full rounded-xl border px-4 py-2 text-sm"
                   />
 
+                  <label className="block text-sm font-medium text-gray-700">
+                    Description {index + 1}
+                  </label>
                   <textarea
                     placeholder="Description"
                     value={item.description}
@@ -206,12 +230,11 @@ const AboutUs = () => {
             </div>
           </section>
 
-          {/* ===== SEO Section ===== */}
+          {/* SEO Section */}
           <div className="rounded-2xl border border-gray-200 bg-gray-50 p-6">
             <h3 className="mb-4 text-sm font-semibold text-gray-700">
               SEO Meta Information
             </h3>
-
             {/* Meta Title */}
             <div className="mb-4">
               <label className="mb-2 block text-sm font-medium text-gray-700">
@@ -276,14 +299,24 @@ const AboutUs = () => {
             </div>
           </div>
 
-          {/* ===== Submit ===== */}
+          {/* Submit */}
           <div className="flex justify-end pt-6">
             <button
               type="submit"
-              className="flex items-center gap-2 rounded-xl bg-[#17254e] px-6 py-2.5 text-sm font-medium cursor-pointer text-white shadow-lg hover:opacity-95"
+              disabled={isSaving}
+              className={`flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-all duration-200 ${
+                isSaving
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#17254e] cursor-pointer hover:opacity-95"
+              }`}
             >
-              <Save size={16} />
-              Save About Us
+              {isSaving ? (
+                "Saving..."
+              ) : (
+                <>
+                  <Save size={16} /> Save About Us
+                </>
+              )}
             </button>
           </div>
         </form>

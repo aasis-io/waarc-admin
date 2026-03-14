@@ -100,7 +100,7 @@ export const updateHomePageDetails = async (data) => {
  * @param {FormData} data
  */
 export const updateAboutUsDetails = async (data) => {
-  const response = await api.post("/about-us", data, {
+  const response = await api.put("/about", data, {
     headers: { "Content-Type": "multipart/form-data" },
   });
   return response;
@@ -110,7 +110,7 @@ export const updateAboutUsDetails = async (data) => {
  * Get About Us details
  */
 export const getAboutUsDetails = async () => {
-  const response = await api.get("/about-us");
+  const response = await api.get("/getAbout");
   return response;
 };
 /* ------------------------------------------------------------------
