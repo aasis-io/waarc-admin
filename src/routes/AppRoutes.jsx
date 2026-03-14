@@ -27,6 +27,8 @@ import EditUsefulLink from "../pages/links/EditUsefulLink";
 import ManageUsefulLinks from "../pages/links/ManageUsefulLinks";
 
 import EventPage from "../pages/event/EventPage";
+import EditImage from "../pages/media/EditImage";
+import EditVideo from "../pages/media/EditVideo";
 import Users from "../pages/users/Users";
 import Settings from "../settings/Settings";
 
@@ -87,11 +89,13 @@ const AppRoutes = () => {
         <Route path="images">
           <Route index element={<ManageImages />} />
           <Route path="add" element={<AddImage />} />
+          <Route path="update/:id" element={<EditImage />} />
         </Route>
 
         <Route path="videos">
           <Route index element={<ManageVideos />} />
           <Route path="add" element={<AddVideo />} />
+          <Route path="update/:id" element={<EditVideo />} />
         </Route>
 
         {/* About Us */}

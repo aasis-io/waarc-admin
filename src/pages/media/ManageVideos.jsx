@@ -1,29 +1,58 @@
 import { Trash2, UserPen } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
-const videosData = [
-  {
-    id: 1,
-    title: "Nepal Trekking Overview",
-    link: "https://www.youtube.com/embed/abc123",
-  },
-  {
-    id: 2,
-    title: "Wildlife Safari Bardiya",
-    link: "https://www.youtube.com/embed/def456",
-  },
-  {
-    id: 3,
-    title: "Pokhara Drone Footage",
-    link: "https://www.youtube.com/embed/V4klN94rfvg",
-  },
-];
-
+import Swal from "sweetalert2";
+import { deleteMediaVideo, getMediaVideos } from "../../services/api"; // <-- your backend API
 
 const ManageVideos = () => {
-  const handleEdit = (id) => console.log("Edit video", id);
-  const handleDelete = (id) => console.log("Delete video", id);
+  const [videosData, setVideosData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch videos from backend
+  useEffect(() => {
+    const fetchVideos = async () => {
+      setLoading(true);
+      try {
+        const res = await getMediaVideos(); // assume it returns array of videos
+        setVideosData(res);
+      } catch (err) {
+        console.error(err);
+        Swal.fire("Error!", "Failed to fetch videos.", "error");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVideos();
+  }, []);
+
+  // Handle delete with Swal confirmation
+  const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await deleteMediaVideo(id); // call API to delete video
+      setVideosData((prev) => prev.filter((vid) => vid.id !== id));
+      Swal.fire("Deleted!", "Video has been deleted.", "success");
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error!", "Failed to delete video.", "error");
+    }
+  };
+
+  const handleEdit = (id) => console.log("Edit video", id); // can be replaced with routing
+
+  if (loading) return <p className="p-6 text-gray-500">Loading videos...</p>;
 
   return (
     <div className="bg-[#e8e9ed] p-6">
@@ -65,8 +94,7 @@ const ManageVideos = () => {
                 </td>
                 <td className="flex justify-center gap-3 px-6 py-4 text-center">
                   <Link
-                    to={"/media/video/update"}
-                    onClick={() => handleEdit(vid.id)}
+                    to={`/videos/update/${vid.id}`}
                     className="flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-600 hover:bg-blue-100 hover:text-blue-800"
                   >
                     <UserPen size={16} /> Edit
@@ -80,6 +108,13 @@ const ManageVideos = () => {
                 </td>
               </tr>
             ))}
+            {videosData.length === 0 && (
+              <tr>
+                <td colSpan="4" className="text-center py-6 text-gray-500">
+                  No videos found.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

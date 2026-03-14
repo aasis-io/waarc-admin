@@ -252,7 +252,7 @@ export const updateSettings = async (data) => {
 // Delete registered mail by ID
 export const deleteRegisteredMail = async (id) => {
   try {
-    const response = await api.delete(`/registered-mails/${id}`);
+    const response = await api.delete(`/eventRegistration/${id}`);
     return response.data;
   } catch (error) {
     console.error("Error deleting registered mail:", error);
@@ -260,10 +260,16 @@ export const deleteRegisteredMail = async (id) => {
   }
 };
 
-// Optional: fetch all registered mails
 export const getRegisteredMails = async () => {
   try {
-    const response = await api.get("/registered-mails");
+    const token = localStorage.getItem("accessToken");
+
+    const response = await api.get("/getEventRegistration", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
     return response.data;
   } catch (error) {
     console.error("Error fetching registered mails:", error);
@@ -352,6 +358,130 @@ export const deleteEvent = async (id) => {
 export const getEvent = async () => {
   const response = await api.get("/getEvent");
   return response;
+};
+
+/* ------------------------------------------------------------------
+   MEDIA IMAGE APIs
+------------------------------------------------------------------- */
+
+/**
+ * Get all Media Images (Public)
+ */
+export const getMediaImages = async () => {
+  const response = await api.get("/getMediaImages");
+  return response.data;
+};
+
+/**
+ * Get single Media Image by ID (Protected)
+ */
+export const getMediaImageById = async (id) => {
+  const token = localStorage.getItem("accessToken");
+  const response = await api.get(`/mediaImage/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+};
+
+/**
+ * Add a new Media Image (Protected)
+ * @param {FormData} data - should include 'image' file and other fields
+ */
+export const addMediaImage = async (data) => {
+  const token = localStorage.getItem("accessToken");
+  const response = await api.post("/mediaImage", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+/**
+ * Update Media Image by ID (Protected)
+ * @param {string|number} id
+ * @param {FormData} data - includes 'image' file and fields to update
+ */
+export const updateMediaImage = async (id, data) => {
+  const token = localStorage.getItem("accessToken");
+  const response = await api.put(`/mediaImage/${id}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+/**
+ * Delete Media Image by ID (Protected)
+ */
+export const deleteMediaImage = async (id) => {
+  const token = localStorage.getItem("accessToken");
+  const response = await api.delete(`/mediaImage/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+};
+
+/* ------------------------------------------------------------------
+   MEDIA VIDEO APIs
+------------------------------------------------------------------- */
+
+/**
+ * Get all Media Videos (Public)
+ */
+export const getMediaVideos = async () => {
+  const response = await api.get("/getMediaVideos");
+  return response.data;
+};
+
+/**
+ * Get single Media Video by ID (Protected)
+ */
+export const getMediaVideoById = async (id) => {
+  const token = localStorage.getItem("accessToken");
+  const response = await api.get(`/mediaVideo/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+};
+
+/**
+ * Add a new Media Video (Protected)
+ * @param {object} data - JSON object containing video info (url, title, etc.)
+ */
+export const addMediaVideo = async (data) => {
+  const token = localStorage.getItem("accessToken");
+  const response = await api.post("/mediaVideo", data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+};
+
+/**
+ * Update Media Video by ID (Protected)
+ * @param {string|number} id
+ * @param {object} data - JSON object with updated fields
+ */
+export const updateMediaVideo = async (id, data) => {
+  const token = localStorage.getItem("accessToken");
+  const response = await api.put(`/mediaVideo/${id}`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
+};
+
+/**
+ * Delete Media Video by ID (Protected)
+ */
+export const deleteMediaVideo = async (id) => {
+  const token = localStorage.getItem("accessToken");
+  const response = await api.delete(`/mediaVideo/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data;
 };
 
 export default api;

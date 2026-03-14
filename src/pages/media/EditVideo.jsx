@@ -1,9 +1,13 @@
 import { FileText, Link as LinkIcon, Loader2, Save, Type } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { addMediaVideo } from "../../services/api"; // <-- backend API
+import { useNavigate, useParams } from "react-router-dom";
+import { getMediaVideoById, updateMediaVideo } from "../../services/api"; // <-- backend API
 
-const AddVideo = () => {
+const EditVideo = () => {
+  const { id: videoId } = useParams();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -11,6 +15,29 @@ const AddVideo = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true); // for initial fetch
+
+  // Fetch existing video data
+  useEffect(() => {
+    const fetchVideo = async () => {
+      setFetching(true);
+      try {
+        const data = await getMediaVideoById(videoId); // API returns {id, title, description, link}
+        setFormData({
+          title: data.title || "",
+          description: data.description || "",
+          link: data.link || "",
+        });
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to fetch video details!");
+      } finally {
+        setFetching(false);
+      }
+    };
+
+    fetchVideo();
+  }, [videoId]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,7 +47,7 @@ const AddVideo = () => {
     e.preventDefault();
 
     if (!formData.title || !formData.link) {
-      toast.error("Please fill in all required fields.");
+      toast.error("Title and video link are required.");
       return;
     }
 
@@ -33,26 +60,23 @@ const AddVideo = () => {
         link: formData.link,
       };
 
-      const res = await addMediaVideo(payload);
-
-      toast.success(`Video "${res.title}" added successfully!`);
-
-      setFormData({
-        title: "",
-        description: "",
-        link: "",
-      });
+      const res = await updateMediaVideo(videoId, payload);
+      toast.success(`Video "${res.title}" updated successfully!`);
+      navigate("/media/manage-videos");
     } catch (err) {
       console.error(err);
-      toast.error(err.message || "Failed to add video.");
+      toast.error(err.message || "Failed to update video.");
     } finally {
       setLoading(false);
     }
   };
 
+  if (fetching)
+    return <p className="p-6 text-gray-500">Loading video details...</p>;
+
   return (
     <div className="bg-[#e8e9ed] p-6">
-      <h2 className="mb-6 text-2xl font-bold text-[#172542]">Add Video</h2>
+      <h2 className="mb-6 text-2xl font-bold text-[#172542]">Edit Video</h2>
 
       <div className="max-w-6xl rounded-3xl bg-white p-8 shadow-xl">
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -148,7 +172,7 @@ const AddVideo = () => {
               ) : (
                 <>
                   <Save size={16} />
-                  Save Video
+                  Update Video
                 </>
               )}
             </button>
@@ -159,4 +183,4 @@ const AddVideo = () => {
   );
 };
 
-export default AddVideo;
+export default EditVideo;

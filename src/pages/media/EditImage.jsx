@@ -5,20 +5,52 @@ import {
   Save,
   Type,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { addMediaImage } from "../../services/api"; // <-- import your API
+import { useParams } from "react-router-dom";
+import { getMediaImageById, updateMediaImage } from "../../services/api"; // <-- backend API
 
-const AddImage = () => {
+const EditImage = () => {
+  const { id: imageId } = useParams();
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    image: null,
+    image: null, // new file
   });
-
-  const [preview, setPreview] = useState(null); // <-- preview state
+  const [preview, setPreview] = useState(null); // image preview
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Fetch existing image
+  useEffect(() => {
+    const fetchImage = async () => {
+      setLoading(true);
+      try {
+        const data = await getMediaImageById(imageId); // fetch from backend
+        setFormData({
+          title: data.title || "",
+          description: data.description || "",
+          image: null,
+        });
+
+        if (data.image) {
+          const baseUrl = import.meta.env.VITE_API_BASE_URL.replace(/\/$/, "");
+          const fullUrl = data.image.startsWith("http")
+            ? data.image
+            : `${baseUrl}${data.image.startsWith("/") ? "" : "/"}${data.image}`;
+          setPreview(fullUrl);
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to fetch image details!");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchImage();
+  }, [imageId]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -35,47 +67,36 @@ const AddImage = () => {
 
     setError("");
     setFormData({ ...formData, image: file });
-    setPreview(URL.createObjectURL(file)); // <-- generate preview
+    setPreview(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!formData.image) {
-      setError("Please select an image.");
+    if (!formData.title) {
+      setError("Title is required.");
       return;
     }
 
     setLoading(true);
-
     try {
       const payload = new FormData();
       payload.append("title", formData.title);
       payload.append("description", formData.description);
-      payload.append("image", formData.image);
+      if (formData.image) payload.append("image", formData.image);
 
-      const res = await addMediaImage(payload);
-
-      toast.success(`Image "${res.title}" added successfully!`);
-
-      // Reset form and preview
-      setFormData({
-        title: "",
-        description: "",
-        image: null,
-      });
-      setPreview(null);
+      const res = await updateMediaImage(imageId, payload);
+      toast.success(`Image "${res.title}" updated successfully!`);
     } catch (err) {
       console.error(err);
-      toast.error(err.message || "Failed to add image.");
+      toast.error(err.message || "Failed to update image.");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
     <div className="bg-[#e8e9ed] p-6">
-      <h2 className="mb-6 text-2xl font-bold text-[#172542]">Add Image</h2>
+      <h2 className="mb-6 text-2xl font-bold text-[#172542]">Edit Image</h2>
 
       <div className="max-w-6xl rounded-3xl bg-white p-8 shadow-xl">
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -131,14 +152,13 @@ const AddImage = () => {
 
             <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-gray-300 px-4 py-3 text-sm text-gray-600 hover:border-[#17254e]">
               <ImageIcon size={16} />
-              Upload Image
+              Upload New Image
               <input
                 type="file"
                 accept="image/*"
                 name="image"
                 onChange={handleFileChange}
                 className="hidden"
-                required
               />
             </label>
 
@@ -176,7 +196,7 @@ const AddImage = () => {
               ) : (
                 <>
                   <Save size={16} />
-                  Save Image
+                  Update Image
                 </>
               )}
             </button>
@@ -187,4 +207,4 @@ const AddImage = () => {
   );
 };
 
-export default AddImage;
+export default EditImage;
