@@ -1,4 +1,3 @@
-// src/routes/AppRoutes.jsx
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import AdminLayout from "../layouts/AdminLayout";
@@ -31,9 +30,18 @@ import EventPage from "../pages/event/EventPage";
 import Users from "../pages/users/Users";
 import Settings from "../settings/Settings";
 
-// Protected Route wrapper
+// Protected Route wrapper with loading check
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        Loading...
+      </div>
+    );
+  }
+
   return isAuthenticated ? children : <Navigate to="/auth/login" replace />;
 };
 
@@ -42,6 +50,7 @@ const AppRoutes = () => {
     <Routes>
       {/* Auth routes */}
       <Route path="/auth/login" element={<Login />} />
+
       {/* Admin routes */}
       <Route
         path="/"
@@ -58,41 +67,50 @@ const AppRoutes = () => {
         <Route path="settings" element={<Settings />} />
 
         {/* Team routes */}
-        <Route path="team/add" element={<AddTeam />} />
-        <Route path="team" element={<ManageTeam />} />
-        <Route path="team/update/:id" element={<EditTeam />} />
+        <Route path="team">
+          <Route index element={<ManageTeam />} />
+          <Route path="add" element={<AddTeam />} />
+          <Route path="update/:id" element={<EditTeam />} />
+        </Route>
 
         {/* Home Page */}
         <Route path="home/details" element={<HomePageDetails />} />
 
         {/* Journals routes */}
-        <Route path="journals/add" element={<AddJournal />} />
-        <Route path="journals" element={<ManageJournals />} />
-        <Route path="journals/update/:id" element={<EditJournal />} />
+        <Route path="journals">
+          <Route index element={<ManageJournals />} />
+          <Route path="add" element={<AddJournal />} />
+          <Route path="update/:id" element={<EditJournal />} />
+        </Route>
 
         {/* Media routes */}
-        <Route path="images/add" element={<AddImage />} />
-        <Route path="images" element={<ManageImages />} />
-        {/* <Route path="images/edit" element={<EditImage />} /> */}
+        <Route path="images">
+          <Route index element={<ManageImages />} />
+          <Route path="add" element={<AddImage />} />
+        </Route>
 
-        <Route path="videos/add" element={<AddVideo />} />
-        <Route path="videos" element={<ManageVideos />} />
-        {/* <Route path="videos/edit" element={<EditVideo />} /> */}
+        <Route path="videos">
+          <Route index element={<ManageVideos />} />
+          <Route path="add" element={<AddVideo />} />
+        </Route>
 
         {/* About Us */}
         <Route path="about" element={<AboutUs />} />
 
-        {/* Event Mails */}
+        {/* Event */}
         <Route path="manage-mails" element={<ManageMails />} />
         <Route path="event" element={<EventPage />} />
 
         {/* Useful Links */}
-        <Route path="useful-links/add" element={<AddUsefulLink />} />
-        <Route path="useful-links" element={<ManageUsefulLinks />} />
-        <Route path="useful-links/update/:id" element={<EditUsefulLink />} />
+        <Route path="useful-links">
+          <Route index element={<ManageUsefulLinks />} />
+          <Route path="add" element={<AddUsefulLink />} />
+          <Route path="update/:id" element={<EditUsefulLink />} />
+        </Route>
       </Route>
+
       {/* Fallback */}
-      <Route path="*" element={<Navigate to="/auth/login" replace />} />{" "}
+      <Route path="*" element={<Navigate to="/auth/login" replace />} />
     </Routes>
   );
 };

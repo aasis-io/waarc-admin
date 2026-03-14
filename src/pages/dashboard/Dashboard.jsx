@@ -1,4 +1,3 @@
-import CountryChart from "./../../components/CountryChart";
 
 const Dashboard = () => {
   return (
@@ -8,7 +7,7 @@ const Dashboard = () => {
         <h3 className="text-xl font-bold text-[#172542] mb-4">
           Country-wise Active Users (Last 30 Days)
         </h3>
-        <CountryChart />
+        {/* <CountryChart /> */}
       </div>
     </div>
   );

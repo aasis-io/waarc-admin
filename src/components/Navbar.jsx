@@ -1,31 +1,22 @@
-import { ChevronDown, LogOut, Search, User } from "lucide-react";
+import { ChevronDown, LogOut, Search } from "lucide-react";
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import Logo from "./../assets/images/wisdom.png";
 
 const Navbar = () => {
   const { logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // Example user object (will come from backend later)
   const user = {
-    name: "Admin User",
+    name: "Wisdom Academy",
     username: "Admin",
-    email: "admin@wisdom.com",
-    avatar: "https://i.pravatar.cc/40",
+    email: "waarc_admin@login.com",
+    avatar:  Logo ,
   };
 
-  // Dropdown menu items
   const dropdownItems = [
-    {
-      label: "Profile",
-      icon: <User size={16} />,
-      action: () => console.log("Go to profile details"), // replace with navigate("/profile")
-      color: "text-gray-700",
-      hoverBg: "hover:bg-gray-100",
-      rounded: "rounded-t-2xl",
-    },
     {
       label: "Logout",
       icon: <LogOut size={16} />,

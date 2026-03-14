@@ -1,24 +1,23 @@
 import { Eye, EyeOff, Lock, User } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ import
-import Logo from "../../assets/logo.svg";
+import { useNavigate } from "react-router-dom";
+import Logo from "../../assets/images/logo.svg";
 import { useAuth } from "../../context/AuthContext";
 
 const Login = () => {
   const { login, isAuthenticated } = useAuth();
-  const navigate = useNavigate(); // ✅ hook
+  const navigate = useNavigate(); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    if (isAuthenticated) navigate("/dashboard", { replace: true }); // ✅ redirect without refresh
+    if (isAuthenticated) navigate("/dashboard", { replace: true });
   }, [isAuthenticated]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     await login(email, password);
-    // no need for window.location.href
   };
 
   return (

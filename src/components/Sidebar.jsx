@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import Logo from "../assets/logo.svg";
+import Logo from "../assets/images/logo.svg";
 
 const categories = [
   {

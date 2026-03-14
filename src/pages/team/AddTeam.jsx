@@ -186,7 +186,7 @@ const AddTeam = () => {
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2 rounded-xl bg-[#17254e] px-6 py-2.5 text-sm font-medium text-white shadow-lg hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex cursor-pointer items-center gap-2 rounded-xl bg-[#17254e] px-6 py-2.5 text-sm font-medium text-white shadow-lg hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Save size={16} />
               {loading ? "Saving..." : "Save Member"}

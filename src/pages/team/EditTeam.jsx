@@ -15,6 +15,7 @@ const EditTeam = () => {
     location: "",
   });
   const [preview, setPreview] = useState(null);
+  const [isSaving, setIsSaving] = useState(false); // <-- new state
 
   // Fetch existing member
   useEffect(() => {
@@ -62,6 +63,7 @@ const EditTeam = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSaving(true); // <-- start saving
 
     try {
       const payload = new FormData();
@@ -71,15 +73,14 @@ const EditTeam = () => {
       payload.append("location", formData.location);
 
       // Call API
-      const response = await updateTeamMember(memberId, payload);
+      await updateTeamMember(memberId, payload);
 
-      console.log("Update response:", response); // <-- debug line
-
-      // Show toast
       toast.success("Team member details updated successfully");
     } catch (error) {
       console.error("Update failed:", error);
       toast.error("Failed to update team member!");
+    } finally {
+      setIsSaving(false); // <-- stop saving
     }
   };
 
@@ -196,10 +197,13 @@ const EditTeam = () => {
           <div className="flex justify-end pt-4">
             <button
               type="submit"
-              className="flex items-center gap-2 rounded-xl bg-[#17254e] px-6 py-2.5 text-sm font-medium cursor-pointer text-white shadow-lg hover:opacity-95"
+              disabled={isSaving} // disable while saving
+              className={`flex items-center gap-2 rounded-xl bg-[#17254e] px-6 py-2.5 text-sm font-medium text-white shadow-lg hover:opacity-95 transition-all duration-200 ${
+                isSaving ? "cursor-wait opacity-70" : "cursor-pointer"
+              }`}
             >
               <Save size={16} />
-              Update Details
+              {isSaving ? "Saving..." : "Update Details"}
             </button>
           </div>
         </form>

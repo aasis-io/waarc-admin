@@ -22,7 +22,7 @@ const HomePageDetails = () => {
   });
 
   const [imagePreview, setImagePreview] = useState(null);
-  const [isSaving, setIsSaving] = useState(false); // loading state
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -82,10 +82,11 @@ const HomePageDetails = () => {
           metaDescription: data.metaDescription || "",
         });
 
-        if (data.bannerImage) {
-          const fullUrl = data.bannerImage.startsWith("http")
-            ? data.bannerImage
-            : `${import.meta.env.VITE_API_BASE_URL}${data.bannerImage}`;
+        if (data.image) {
+          const baseUrl = import.meta.env.VITE_API_BASE_URL.replace(/\/$/, "");
+          const fullUrl = data.image.startsWith("http")
+            ? data.image
+            : `${baseUrl}${data.image.startsWith("/") ? "" : "/"}${data.image}`;
           setImagePreview(fullUrl);
         }
       } catch (error) {

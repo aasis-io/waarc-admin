@@ -8,15 +8,19 @@ const AdminLayout = () => {
 
   return (
     <div className="flex h-screen bg-[#e8e9ed] overflow-hidden">
-      <div className="h-full">
+      {/* Sidebar */}
+      <aside className={`h-full transition-all duration-300 ${sidebarOpen ? "w-64" : "w-16"}`}>
         <Sidebar open={sidebarOpen} />
-      </div>
+      </aside>
 
-      <div className="flex flex-col flex-1 h-full">
+      {/* Main content */}
+      <div className="flex flex-col flex-1 h-full overflow-hidden">
+        {/* Navbar */}
         <Navbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
+        {/* Page content */}
         <main className="flex-1 overflow-y-auto p-4">
-          <Outlet />
+          <Outlet /> {/* Renders nested routes */}
         </main>
       </div>
     </div>
