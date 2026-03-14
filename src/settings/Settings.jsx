@@ -45,20 +45,22 @@ const Settings = () => {
   });
 
   const [isSaving, setIsSaving] = useState(false);
-
   useEffect(() => {
     const fetchSettings = async () => {
       try {
         const res = await getSettings();
 
         if (res.data) {
+          const cleaned = Object.fromEntries(
+            Object.entries(res.data).map(([key, value]) => [key, value ?? ""])
+          );
+
           setFormData((prev) => ({
             ...prev,
-            ...res.data,
+            ...cleaned,
           }));
         }
       } catch (error) {
-        console.error("Failed to fetch settings:", error);
         toast.error("Failed to fetch site settings");
       }
     };
