@@ -10,6 +10,8 @@ import {
   User,
 } from "lucide-react";
 import React, { useState } from "react";
+import toast, { Toaster } from "react-hot-toast"; // <-- Import toast
+import { addJournal } from "../../services/api";
 
 const AddJournal = () => {
   const [formData, setFormData] = useState({
@@ -19,7 +21,7 @@ const AddJournal = () => {
     publishedDate: "",
     image: null,
     pdf: null,
-    pdfLink: "",
+    link: "",
   });
 
   const [imagePreview, setImagePreview] = useState(null);
@@ -38,6 +40,7 @@ const AddJournal = () => {
     if (e.target.name === "image") {
       if (file.size > 6 * 1024 * 1024) {
         setError("Cover image must be smaller than 6MB.");
+        toast.error("Cover image must be smaller than 6MB.");
         return;
       }
       setError("");
@@ -50,6 +53,7 @@ const AddJournal = () => {
     if (e.target.name === "pdf") {
       if (file.size > 10 * 1024 * 1024) {
         setError("PDF file must be smaller than 10MB.");
+        toast.error("PDF file must be smaller than 10MB.");
         return;
       }
       setError("");
@@ -61,12 +65,13 @@ const AddJournal = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.pdf && !formData.pdfLink) {
-      alert("Please provide either a PDF file or a PDF link.");
+    if (!formData.pdf && !formData.link) {
+      toast.error("Please provide either a PDF file or a PDF link.");
       return;
     }
 
     setLoading(true);
+    setError("");
 
     const data = new FormData();
     data.append("title", formData.title);
@@ -75,30 +80,42 @@ const AddJournal = () => {
     data.append("publishedDate", formData.publishedDate);
     if (formData.image) data.append("image", formData.image);
     if (formData.pdf) data.append("pdf", formData.pdf);
-    if (formData.pdfLink) data.append("pdfLink", formData.pdfLink);
+    if (formData.link) data.append("link", formData.link);
 
-    console.log("Journal Data (backend-ready):");
-    for (let pair of data.entries()) {
-      console.log(pair[0], ":", pair[1]);
+    try {
+      const response = await addJournal(data);
+      console.log("Journal saved:", response.data);
+
+      toast.success("Journal saved successfully!");
+
+      // Reset form after success
+      setFormData({
+        title: "",
+        authors: "",
+        category: "",
+        publishedDate: "",
+        image: null,
+        pdf: null,
+        link: "",
+      });
+      setImagePreview(null);
+    } catch (err) {
+      console.error("Error saving journal:", err);
+      const message =
+        err.response?.data?.message ||
+        "Something went wrong. Please try again.";
+      setError(message);
+      toast.error(message);
+    } finally {
+      setLoading(false);
     }
-
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    setFormData({
-      title: "",
-      authors: "",
-      category: "",
-      publishedDate: "",
-      image: null,
-      pdf: null,
-      pdfLink: "",
-    });
-    setImagePreview(null);
-    setLoading(false);
   };
 
   return (
     <div className="bg-[#e8e9ed] p-6">
+      {/* Toast container */}
+      <Toaster position="top-right" />
+
       <h2 className="mb-6 text-2xl font-bold text-[#172542]">Add Journal</h2>
 
       <div className="max-w-6xl rounded-3xl bg-white p-8 shadow-xl">
@@ -266,8 +283,8 @@ const AddJournal = () => {
               />
               <input
                 type="url"
-                name="pdfLink"
-                value={formData.pdfLink}
+                name="link"
+                value={formData.link}
                 onChange={handleChange}
                 placeholder="https://drive.google.com/..."
                 className="w-full rounded-xl border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:border-[#17254e] focus:outline-none"

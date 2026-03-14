@@ -179,7 +179,7 @@ export const deleteTeamMember = async (id) => {
  * @param {FormData} data - includes title, authors, category, publishedDate, image, pdf
  */
 export const addJournal = async (data) => {
-  const response = await api.post("/journals", data, {
+  const response = await api.post("/journal", data, {
     headers: { "Content-Type": "multipart/form-data" },
   });
   return response;
@@ -189,7 +189,7 @@ export const addJournal = async (data) => {
  * Get all Journals
  */
 export const getJournals = async () => {
-  const response = await api.get("/journals");
+  const response = await api.get("/getJournals");
   return response;
 };
 
@@ -198,7 +198,7 @@ export const getJournals = async () => {
  * @param {string} id
  */
 export const getJournalById = async (id) => {
-  const response = await api.get(`/journals/${id}`);
+  const response = await api.get(`/journal/${id}`);
   return response;
 };
 
@@ -208,7 +208,7 @@ export const getJournalById = async (id) => {
  * @param {FormData} data
  */
 export const updateJournal = async (id, data) => {
-  const response = await api.put(`/journals/${id}`, data, {
+  const response = await api.put(`/journal/${id}`, data, {
     headers: { "Content-Type": "multipart/form-data" },
   });
   return response;
@@ -219,7 +219,7 @@ export const updateJournal = async (id, data) => {
  * @param {string} id
  */
 export const deleteJournal = async (id) => {
-  const response = await api.delete(`/journals/${id}`);
+  const response = await api.delete(`/journal/${id}`);
   return response;
 };
 /* ------------------------------------------------------------------

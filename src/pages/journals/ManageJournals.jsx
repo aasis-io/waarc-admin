@@ -1,8 +1,8 @@
 import { FileText, Trash2, UserPen } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import swal from "sweetalert2";
-// import { getTeamJournals, deleteJournal } from "../../services/api"; // Uncomment for backend
+import Swal from "sweetalert2";
+import { deleteJournal, getJournals } from "../../services/api";
 
 const ManageJournals = () => {
   const [journals, setJournals] = useState([]);
@@ -12,29 +12,11 @@ const ManageJournals = () => {
     const fetchJournals = async () => {
       setLoading(true);
       try {
-        // const data = await getTeamJournals();
-        // setJournals(data);
-
-        // Temporary mock
-        setJournals([
-          {
-            id: 1,
-            title: "Climate Change Impact on Himalayas",
-            authors: "Ashish Thapa, Sita Sharma",
-            category: "Journals",
-            publishedDate: "2024-01-15",
-          },
-          {
-            id: 2,
-            title: "Sustainable Trekking Practices",
-            authors: "Ramesh Koirala",
-            category: "Our Publications",
-            publishedDate: "2023-11-02",
-          },
-        ]);
+        const response = await getJournals();
+        setJournals(response.data || []);
       } catch (error) {
         console.error("Error fetching journals:", error);
-        swal("Error", "Failed to fetch journals", "error");
+        Swal.fire("Error", "Failed to fetch journals", "error");
       } finally {
         setLoading(false);
       }
@@ -43,30 +25,33 @@ const ManageJournals = () => {
   }, []);
 
   const handleDelete = async (id) => {
-    const result = await swal.fire({
+    const result = await Swal.fire({
       title: "Are you sure?",
       text: "Once deleted, you will not be able to recover this journal!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Delete",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
       cancelButtonText: "Cancel",
-      reverseButtons: true,
     });
 
     if (!result.isConfirmed) return;
 
     try {
-      // await deleteJournal(id); // Backend call
-      setJournals(journals.filter((j) => j.id !== id)); // Temporary frontend delete
-      swal.fire("Deleted!", "Journal has been deleted.", "success");
+      await deleteJournal(id);
+      setJournals((prev) => prev.filter((j) => j.id !== id));
+      Swal.fire("Deleted!", "Journal has been deleted.", "success");
     } catch (error) {
       console.error("Error deleting journal:", error);
-      swal.fire("Error", "Failed to delete journal", "error");
+      Swal.fire("Error!", "Failed to delete journal.", "error");
     }
   };
 
   if (loading)
-    return <div className="p-6 text-gray-600">Loading journals...</div>;
+    return (
+      <div className="p-6 text-gray-600 font-medium">Loading journals...</div>
+    );
 
   return (
     <div className="bg-[#e8e9ed] p-6">
@@ -75,25 +60,25 @@ const ManageJournals = () => {
       </h2>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full overflow-hidden rounded-2xl bg-white shadow-lg">
+        <table className="min-w-full bg-white shadow-lg rounded-2xl overflow-hidden">
           <thead className="bg-gray-100">
             <tr>
-              <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-gray-600">
+              <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 uppercase">
                 SN
               </th>
-              <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-gray-600">
+              <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 uppercase">
                 Title
               </th>
-              <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-gray-600">
+              <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 uppercase">
                 Authors
               </th>
-              <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-gray-600">
+              <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 uppercase">
                 Category
               </th>
-              <th className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-gray-600">
+              <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 uppercase">
                 Published
               </th>
-              <th className="px-6 py-3 text-center text-sm font-medium uppercase tracking-wider text-gray-600">
+              <th className="px-6 py-3 text-center text-sm font-medium text-gray-600 uppercase">
                 Action
               </th>
             </tr>
@@ -103,9 +88,11 @@ const ManageJournals = () => {
             {journals.map((journal, index) => (
               <tr
                 key={journal.id}
-                className="transition-colors hover:bg-gray-50"
+                className="hover:bg-gray-50 transition-colors"
               >
-                <td className="whitespace-nowrap px-6 py-4">{index + 1}</td>
+                <td className="px-6 py-4 text-sm font-medium text-gray-700">
+                  {index + 1}
+                </td>
 
                 <td className="px-6 py-4 flex items-center gap-3">
                   <FileText size={18} className="text-gray-400" />
@@ -126,25 +113,33 @@ const ManageJournals = () => {
                   {journal.publishedDate}
                 </td>
 
-                <td className="flex justify-center gap-3 px-6 py-4 text-center">
-                  <Link
-                    to={`/journals/update/${journal.id}`}
-                    className="flex items-center gap-1 rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-600 cursor-pointer transition-colors hover:bg-blue-100 hover:text-blue-800"
-                  >
-                    <UserPen size={16} />
-                    <span>Edit</span>
-                  </Link>
+                <td className="px-6 py-4 text-center">
+                  <div className="flex justify-center gap-2">
+                    <Link
+                      to={`/journals/update/${journal.id}`}
+                      className="flex items-center gap-1 px-3 py-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 font-medium text-sm"
+                    >
+                      <UserPen size={16} /> Edit
+                    </Link>
 
-                  <button
-                    onClick={() => handleDelete(journal.id)}
-                    className="flex items-center gap-1 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600 cursor-pointer transition-colors hover:bg-red-100 hover:text-red-800"
-                  >
-                    <Trash2 size={16} />
-                    <span>Delete</span>
-                  </button>
+                    <button
+                      onClick={() => handleDelete(journal.id)}
+                      className="flex cursor-pointer items-center gap-1 px-3 py-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 font-medium text-sm"
+                    >
+                      <Trash2 size={16} /> Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
+
+            {journals.length === 0 && !loading && (
+              <tr>
+                <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
+                  No journals found.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

@@ -42,7 +42,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <div className="flex justify-between items-center mb-6 bg-white px-8 py-2">
+    <div className="flex justify-between items-center mb-0 bg-white px-8 py-2">
       {/* Search */}
       <div className="flex items-center w-full max-w-md">
         <div className="relative w-full">
