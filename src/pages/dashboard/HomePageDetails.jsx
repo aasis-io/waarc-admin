@@ -63,7 +63,7 @@ const HomePageDetails = () => {
       console.error("Failed to update home page", error);
       toast.error("Failed to update home page. Check console for details.");
     } finally {
-      setIsSaving(false); // stop saving
+      setIsSaving(false);
     }
   };
 
@@ -185,7 +185,7 @@ const HomePageDetails = () => {
             </h3>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block mb-2 text-sm font-medium text-gray-700">
                 Meta Title
               </label>
               <div className="relative">
@@ -205,7 +205,7 @@ const HomePageDetails = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block mb-2 text-sm font-medium text-gray-700">
                 Meta Keywords
               </label>
               <div className="relative">
@@ -225,7 +225,7 @@ const HomePageDetails = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block mb-2 text-sm font-medium text-gray-700">
                 Meta Description
               </label>
               <div className="relative">
