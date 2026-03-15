@@ -182,11 +182,11 @@ const AboutUs = () => {
               </label>
 
               {imagePreview && (
-                <div className="mt-3">
+                <div className="mt-3 p-4 bg-white rounded-xl border border-gray-200 max-w-xl">
                   <img
                     src={imagePreview}
-                    alt="About Us Banner"
-                    className="h-40 w-full max-w-md object-cover rounded-xl border border-gray-200"
+                    alt="Banner Preview"
+                    className="w-full h-full object-cover rounded-lg"
                   />
                 </div>
               )}
