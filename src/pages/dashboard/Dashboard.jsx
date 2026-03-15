@@ -1,3 +1,4 @@
+import { ExternalLink } from "lucide-react";
 import React from "react";
 import { Link } from "react-router-dom";
 import CountryChart from "./../../components/CountryChart";
@@ -13,12 +14,15 @@ const Dashboard = () => {
         <CountryChart />
       </div>
 
-      <div className="mt-6 text-center">
+      <div className="mt-6">
         <Link
           to="https://waarc.edu.np"
-          className="text-blue-600 hover:underline font-medium"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#172542] hover:underline font-medium inline-flex items-center gap-2"
         >
-          Go to Home Page
+          Go to Site Home Page
+          <ExternalLink size={16} />
         </Link>
       </div>
     </div>
