@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import RichTextEditor from "../../components/RichTextEditor";
 import { getAboutUsDetails, updateAboutUsDetails } from "../../services/api";
 
 const AboutUs = () => {
@@ -85,9 +86,10 @@ const AboutUs = () => {
 
         setFormData({
           title: data.title || "",
-          description: data.description
-            ? data.description.replace(/<\/?[^>]+(>|$)/g, "") // strip HTML tags
-            : "",
+          // description: data.description
+          //   ? data.description.replace(/<\/?[^>]+(>|$)/g, "") // strip HTML tags
+          //   : "",
+          description: data.description || "",
           image: null,
           metaTitle: data.metaTitle || "",
           metaKeywords: data.metaKeywords || "",
@@ -154,13 +156,15 @@ const AboutUs = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Description
               </label>
-              <textarea
-                name="description"
+
+              <RichTextEditor
                 value={formData.description}
-                onChange={handleChange}
-                rows={6}
-                placeholder="Enter page description"
-                className="w-full rounded-xl border px-4 py-2.5 text-sm"
+                onChange={(html) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    description: html,
+                  }))
+                }
               />
             </div>
 

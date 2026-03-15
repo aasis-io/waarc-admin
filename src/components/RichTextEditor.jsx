@@ -31,25 +31,32 @@ const RichTextEditor = ({ value, onChange }) => {
     content: value || "",
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
-      setHtmlContent(html); // update textarea
-      onChange(html); // sync back to parent
-      updateCurrentHeading();
+      setHtmlContent(html);
+      onChange(html);
+      updateCurrentHeading(editor);
     },
-    onSelectionUpdate: () => updateCurrentHeading(),
+    onSelectionUpdate: ({ editor }) => updateCurrentHeading(editor),
   });
 
-  const updateCurrentHeading = () => {
-    if (!editor) return;
+  const updateCurrentHeading = (editorInstance) => {
+    if (!editorInstance) return;
 
-    if (editor.isActive("heading", { level: 1 })) setCurrentHeading("H1");
-    else if (editor.isActive("heading", { level: 2 })) setCurrentHeading("H2");
-    else if (editor.isActive("heading", { level: 3 })) setCurrentHeading("H3");
+    if (editorInstance.isActive("heading", { level: 1 }))
+      setCurrentHeading("H1");
+    else if (editorInstance.isActive("heading", { level: 2 }))
+      setCurrentHeading("H2");
+    else if (editorInstance.isActive("heading", { level: 3 }))
+      setCurrentHeading("H3");
     else setCurrentHeading("Normal");
   };
 
+  /* 🔥 FIX: sync editor when value changes (API load, editing existing content) */
   useEffect(() => {
-    updateCurrentHeading();
-  }, [editor]);
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value || "");
+      setHtmlContent(value || "");
+    }
+  }, [value, editor]);
 
   const addImageByUrl = () => {
     const url = prompt("Enter image URL");
@@ -58,24 +65,24 @@ const RichTextEditor = ({ value, onChange }) => {
 
   const addLink = () => {
     const url = prompt("Enter link URL");
-    if (url)
+    if (url) {
       editor
         .chain()
         .focus()
         .extendMarkRange("link")
         .setLink({ href: url })
         .run();
+    }
   };
-
-  if (!editor) return null;
 
   const toggleHTMLMode = () => {
     if (showHTML && editor) {
-      // When switching from HTML -> Rich Text, set the HTML content in editor
-      editor.commands.setContent(htmlContent, false); // false = don't emit update immediately
+      editor.commands.setContent(htmlContent, false);
     }
     setShowHTML(!showHTML);
   };
+
+  if (!editor) return null;
 
   return (
     <div className="rounded-xl border border-gray-300">
@@ -178,7 +185,6 @@ const RichTextEditor = ({ value, onChange }) => {
           <Code size={16} />
         </button>
 
-        {/* HTML Toggle */}
         <button
           type="button"
           onClick={toggleHTMLMode}
@@ -187,7 +193,6 @@ const RichTextEditor = ({ value, onChange }) => {
           HTML
         </button>
 
-        {/* Mode Indicator */}
         <span className="ml-2 text-sm text-gray-500">
           {showHTML ? "HTML Mode" : "Rich Text Mode"}
         </span>
