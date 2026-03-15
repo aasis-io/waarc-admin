@@ -86,9 +86,6 @@ const AboutUs = () => {
 
         setFormData({
           title: data.title || "",
-          // description: data.description
-          //   ? data.description.replace(/<\/?[^>]+(>|$)/g, "") // strip HTML tags
-          //   : "",
           description: data.description || "",
           image: null,
           metaTitle: data.metaTitle || "",
@@ -171,7 +168,7 @@ const AboutUs = () => {
             {/* Image Upload */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Banner Image
+                Image
               </label>
               <label className="inline-flex items-center gap-2 cursor-pointer rounded-xl border border-dashed px-4 py-3 text-sm text-gray-600">
                 <ImageIcon size={16} />
