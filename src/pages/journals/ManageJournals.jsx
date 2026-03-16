@@ -13,7 +13,13 @@ const ManageJournals = () => {
       setLoading(true);
       try {
         const response = await getJournals();
-        setJournals(response.data || []);
+        const data = response.data || [];
+
+        data.sort(
+          (a, b) => new Date(b.publishedDate) - new Date(a.publishedDate)
+        );
+
+        setJournals(data);
       } catch (error) {
         console.error("Error fetching journals:", error);
         Swal.fire("Error", "Failed to fetch journals", "error");
