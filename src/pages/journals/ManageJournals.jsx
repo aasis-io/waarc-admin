@@ -1,4 +1,4 @@
-import { FileText, Trash2, UserPen } from "lucide-react";
+import { Trash2, UserPen } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -95,7 +95,6 @@ const ManageJournals = () => {
                 </td>
 
                 <td className="px-6 py-4 flex items-center gap-3">
-                  <FileText size={18} className="text-gray-400" />
                   <span className="font-medium text-gray-800">
                     {journal.title}
                   </span>
