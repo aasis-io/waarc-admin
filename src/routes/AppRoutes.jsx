@@ -26,6 +26,7 @@ import AddUsefulLink from "../pages/links/AddUsefulLink";
 import EditUsefulLink from "../pages/links/EditUsefulLink";
 import ManageUsefulLinks from "../pages/links/ManageUsefulLinks";
 
+import AlertManagement from "../pages/alert/AlertManagement";
 import EventPage from "../pages/event/EventPage";
 import EditImage from "../pages/media/EditImage";
 import EditVideo from "../pages/media/EditVideo";
@@ -100,6 +101,8 @@ const AppRoutes = () => {
 
         {/* About Us */}
         <Route path="about" element={<AboutUs />} />
+
+        <Route path="alert" element={<AlertManagement />} />
 
         {/* Event */}
         <Route path="manage-mails" element={<ManageMails />} />

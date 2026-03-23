@@ -6,6 +6,7 @@ import {
   House,
   LayoutDashboard,
   Link2,
+  Megaphone,
   NotebookText,
   Settings,
   UserRoundCog,
@@ -82,6 +83,7 @@ const categories = [
     title: "Management",
     items: [
       { name: "Site Info", path: "/settings", icon: <Settings size={16} /> },
+      { name: "Alert", path: "/alert", icon: <Megaphone size={16} /> },
     ],
   },
 ];
