@@ -6,7 +6,7 @@ import AppRoutes from "./routes/AppRoutes";
 function App() {
   return (
     <>
-      <Toaster position="top-right" reverseOrder={false} />
+      <Toaster position="bottom-right" reverseOrder={false} />
       <AuthProvider>
         <BrowserRouter>
           <AppRoutes />
