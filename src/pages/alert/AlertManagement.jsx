@@ -26,7 +26,7 @@ const AlertManagement = () => {
   const [saving, setSaving] = useState(false);
 
   const fileInputRef = useRef(null);
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
   /* ───────── LOAD ───────── */
   useEffect(() => {
@@ -37,19 +37,24 @@ const AlertManagement = () => {
     setLoading(true);
     try {
       const res = await getAlert();
-      if (res?.data) {
-        const data = res.data;
+
+      if (res?.data && res.data.length > 0) {
+        const data = res.data[0]; // ✅ FIX
+
         setAlert({
           id: data.id,
           title: data.title,
           link: data.link,
-          imagePreview: data.image ? `${BASE_URL}${data.image}` : "",
+          imagePreview:
+            data.image && data.image.startsWith("/")
+              ? `${BASE_URL}${data.image}`
+              : data.image || "",
         });
       } else {
         setAlert(null);
       }
     } catch (err) {
-      console.error(err);
+      console.error("Failed to load alert", err);
       setAlert(null);
     } finally {
       setLoading(false);
@@ -179,7 +184,7 @@ const AlertManagement = () => {
         {mode === "view" && !alert && !loading && (
           <button
             onClick={enterAdd}
-            className="flex items-center gap-2 rounded-xl cursor-pointer bg-[#17254e] px-5 py-2.5 text-sm font-medium text-white shadow hover:opacity-90 transition"
+            className="flex items-center gap-2 rounded-xl bg-[#17254e] px-5 py-2.5 text-sm font-medium text-white shadow hover:opacity-90 transition"
           >
             <Plus size={16} />
             Add Alert
@@ -268,7 +273,7 @@ const AlertManagement = () => {
                   onClick={() => fileInputRef.current?.click()}
                   className={`flex flex-col items-center justify-center h-40 rounded-2xl border-2 border-dashed cursor-pointer ${
                     dragOver
-                      ? " bg-blue-50"
+                      ? "border-[#17254e] bg-blue-50"
                       : "border-gray-300 hover:border-[#17254e]"
                   }`}
                 >
@@ -298,7 +303,7 @@ const AlertManagement = () => {
               <button
                 type="submit"
                 disabled={saving}
-                className="flex items-center gap-2 bg-[#17254e] cursor-pointer text-white px-6 py-2.5 rounded-xl"
+                className="flex items-center gap-2 bg-[#17254e] text-white px-6 py-2.5 rounded-xl"
               >
                 <Save size={15} />
                 {saving ? "Saving..." : "Save Alert"}
@@ -331,6 +336,7 @@ const AlertManagement = () => {
                   <a
                     href={alert.link}
                     target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center gap-2 mt-3 text-sm text-[#17254e] hover:underline"
                   >
                     <LinkIcon size={14} />
@@ -361,12 +367,12 @@ const AlertManagement = () => {
                   No alert created
                 </p>
                 <p className="text-sm text-gray-400 mt-1">
-                  Click "Add Event" to schedule one.
+                  Click "Add Alert" to create one.
                 </p>
               </div>
               <button
                 onClick={enterAdd}
-                className="mt-2 cursor-pointer flex items-center gap-2 rounded-xl bg-[#17254e] px-6 py-2.5 text-sm font-medium text-white shadow hover:opacity-90 transition-opacity"
+                className="mt-2 flex items-center gap-2 rounded-xl bg-[#17254e] px-6 py-2.5 text-sm font-medium text-white shadow hover:opacity-90 transition"
               >
                 <Plus size={15} />
                 Add Alert

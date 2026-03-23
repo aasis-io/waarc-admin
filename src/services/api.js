@@ -489,7 +489,7 @@ export const deleteMediaVideo = async (id) => {
  * @param {FormData} data
  */
 export const addAlert = async (data) => {
-  const response = await api.post("/event", data, {
+  const response = await api.post("/notice", data, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -501,7 +501,7 @@ export const addAlert = async (data) => {
  * Delete Event
  */
 export const deleteAlert = async (id) => {
-  const response = await api.delete(`/event`);
+  const response = await api.delete(`/notice/${id}`);
   return response;
 };
 
@@ -509,7 +509,7 @@ export const deleteAlert = async (id) => {
  * Get Event
  */
 export const getAlert = async () => {
-  const response = await api.get("/getAlert");
+  const response = await api.get("/getNotices");
   return response;
 };
 
