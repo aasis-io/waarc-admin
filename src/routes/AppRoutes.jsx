@@ -33,7 +33,6 @@ import EditVideo from "../pages/media/EditVideo";
 import Settings from "../pages/settings/Settings";
 import Users from "../pages/users/Users";
 
-// Protected Route wrapper with loading check
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
 
